@@ -1,0 +1,9 @@
+services:
+  current_location.current_time:
+    class: Drupal\current_location\Services\CurrentTime
+    arguments: ['@date.formatter', '@config.factory', '@datetime.time']
+  cache_context.current_time:
+    class: Drupal\current_location\CacheContext\CurrentTimeCacheContext
+    arguments: ['@current_user', '@config.factory']
+    tags:
+      - { name: cache_context }

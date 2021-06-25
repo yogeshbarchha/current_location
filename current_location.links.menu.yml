@@ -1,0 +1,5 @@
+current_location.config_form:
+  title: Timezone Setting
+  description: 'Allow user to add country, city and timezone setting.'
+  parent: system.admin_config_development
+  route_name: current_location.config_form

@@ -1,0 +1,9 @@
+name: Current Location
+type: module
+description: This module display the user location and time.
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: custom
+dependencies:
+  - drupal:block
+configure: current_location.config_form

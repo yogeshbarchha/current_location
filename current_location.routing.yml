@@ -1,0 +1,7 @@
+current_location.config_form:
+  path: '/admin/config/development/current_location'
+  defaults:
+    _form: '\Drupal\current_location\Form\CurrentLocationConfigurationForm'
+    _title: 'Timezone Setting'
+  requirements:
+    _permission: 'administer site configuration'
