@@ -75,7 +75,7 @@ class CurrentTime {
     $country = !empty($config->get('country')) ? $config->get('country') : '';
     $city = !empty($config->get('city')) ? $config->get('city') : '';
     $time = $this->dateFormatter->format($this->time->getCurrentTime(), 'custom', 'jS M Y \- H:i:s a', $timezone);
-    return $country .' '. $time .' '. $config->get('timezone');
+    return $country .', '. $city .', '. $time;
   }
 
 }
