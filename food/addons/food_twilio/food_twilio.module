@@ -1,0 +1,34 @@
+<?php
+
+use Imbibe\Util\PhpHelper;
+
+function food_twilio_form_food_platform_settings_form_alter(&$form, $form_state) {
+	$entity = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	$form['twilio_settings'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Twilio settings'),
+	);
+	$form['twilio_settings']['twilio_sid'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Sid'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['twilio_settings', 'sid']),
+	);
+	$form['twilio_settings']['twilio_token'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Token'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['twilio_settings', 'token']),
+	);
+	$form['twilio_settings']['twilio_from_number'] = array(
+		'#type' => 'textfield',
+		'#title' => t('From Number'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['twilio_settings', 'from_number']),
+	);
+
+	$form['#platform_settings_callback'][] = function(&$entity, &$form, $form_state) {
+		$entity->twilio_settings = new \Drupal\food_twilio\Core\Platform\TwilioSettings();
+        $entity->twilio_settings->sid = $form_state->getValue('twilio_sid');
+        $entity->twilio_settings->token = $form_state->getValue('twilio_token');
+        $entity->twilio_settings->from_number = $form_state->getValue('twilio_from_number');
+	};
+}

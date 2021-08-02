@@ -1,0 +1,9 @@
+name: Food Twilio integration
+description: Provides Twilio integration for Food module.
+package: Food
+type: module
+
+dependencies:
+    - food
+
+core: 8.x

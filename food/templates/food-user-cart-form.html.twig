@@ -1,0 +1,119 @@
+{# https://www.drupal.org/node/2788835#comment-11785706 #}
+{# form tag is not necessary in this template, because Drupal adds a theme wrapper to the form that take care of create this tag with the right attributes. I also discover that if the id of the form is equal to the name of the theme function you dont'n need to include the line $form['#theme'] = 'food_restaurant_search_form' #}
+{{ form.form_build_id }}
+{{ form.form_token }}
+{{ form.form_id }}
+
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set cart = form['#cart'] %}
+{% set restaurant = form['#restaurant'] %}
+{% set cartRenderOptions = form['#cartRenderOptions'] %}
+{% set minimum_order_amount = form['#minimum_order_amount'] %}
+
+<div class="table-responsive">
+  <table class="table table-hover table-condensed">
+    <caption>{{ restaurant.name }}</caption>
+    <thead>
+    <tr>
+      <th class="user-cart-form-item-name">Item</th>
+      <th class="user-cart-form-item-quantity">Qty</th>
+      <th class="user-cart-form-item-amount">Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if cart.order_details.items == null %}
+      <tr>
+        <td colspan="3">Cart empty</td>
+      </tr>
+    {% else %}
+      {% for item in cart.order_details.items %}
+        <tr>
+          <td class="user-cart-form-item-name">
+            <b>{{ item.item_name }}</b>
+            {% if item.size != null %}
+              <br/>Size: {{ item.size.name }}
+            {% endif %}
+            {% if item.options|length > 0 %}
+              {% for option in item.options %}
+                <br/>{{ option.option_name }}
+              {% endfor %}
+            {% endif %}
+            {% if item.instructions|length > 0 %}
+              <br/>{{ item.instructions }}
+            {% endif %}
+          </td>
+          <td class="user-cart-form-item-quantity">
+            {% if cartRenderOptions.render_mode == constant('\\Drupal\\food\\Core\\Cart\\CartRenderMode::Editable') %}{{ item.decrementCartItemLink }}{% endif %}
+            {{ item.quantity }}
+            {% if cartRenderOptions.render_mode == constant('\\Drupal\\food\\Core\\Cart\\CartRenderMode::Editable') %}{{ item.incrementCartItemLink }}{% endif %}
+          </td>
+          <td class="user-cart-form-item-amount">
+            {{ item.item_total_amount }}
+            {% if cartRenderOptions.render_mode == constant('\\Drupal\\food\\Core\\Cart\\CartRenderMode::Editable') %}{{ item.deleteCartItemLink }}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+    </tbody>
+    <tfoot>
+    {% if cart.order_details.breakup.items_total_amount %}
+      <tr>
+        <td>Subtotal:</td>
+        <td>&nbsp;</td>
+        <td id="order-sub-total">{{ cart.order_details.breakup.items_total_amount }}</td>
+      </tr>
+
+      {% if cart.order_details.breakup.total_discount_amount > 0 and cartRenderOptions.hide_discount != TRUE %}
+        <tr>
+          <td>Discount:</td>
+          <td>&nbsp;</td>
+          <td>{{ cart.order_details.breakup.total_discount_amount }}</td>
+        </tr>
+      {% endif %}
+
+      {% if cart.order_details.breakup.tip_amount > 0 %}
+        <tr>
+          <td>Tip:</td>
+          <td>&nbsp;</td>
+          <td>{{ cart.order_details.breakup.tip_amount }}</td>
+        </tr>
+      {% endif %}
+
+      {% if cart.order_details.breakup.tax_amount > 0 %}
+        <tr>
+          <td>Tax:</td>
+          <td>&nbsp;</td>
+          <td>{{ cart.order_details.breakup.tax_amount }}</td>
+        </tr>
+      {% endif %}
+
+      <tr class="user-cart-form-total-amount">
+        <td>Total:</td>
+        <td>&nbsp;</td>
+        <td>{{ currencySymbol }}{{ cart.order_details.breakup.net_amount }}</td>
+      </tr>
+
+      {% if cart.order_details.breakup.items_total_amount < minimum_order_amount %}
+        <tr>
+          <td colspan="3">Delivery
+            Minimum: {{ currencySymbol }}{{ minimum_order_amount }} (before
+            tax). No minimum on Pickup orders.
+          </td>
+        </tr>
+      {% endif %}
+    {% endif %}
+    </tfoot>
+  </table>
+
+  <div class="cart-form-action-btn">
+    {% if cartRenderOptions.render_mode == constant('\\Drupal\\food\\Core\\Cart\\CartRenderMode::Editable') %}
+      {% if restaurant.order_types.delivery_settings.enabled %}
+        {{ cart.deliveryLink }}
+      {% endif %}
+      {% if restaurant.order_types.pickup_settings.enabled %}
+        {{ cart.pickupLink }}
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

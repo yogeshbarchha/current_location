@@ -1,0 +1,27 @@
+#Twilio routes
+food_twilio.call:
+  path: '/food/twilio/call'
+  defaults:
+    _title: 'Invoke Twilio calls'
+    _controller: '\Drupal\food_twilio\Form\Partner\OrderController::call'
+  requirements:
+    _permission: 'access content'
+
+food_twilio.ordercallback:
+  path: '/food/twilio/ordercallback/{order_id}'
+  defaults:
+    _title: 'Twilio Order callback'
+    _controller: '\Drupal\food_twilio\Form\Partner\OrderController::orderCallback'
+  requirements:
+    _permission: 'access content'
+    order_id: \d+
+
+food_twilio.orderinstructions:
+  path: '/food/twilio/orderinstructions/{order_id}'
+  defaults:
+    _title: 'Twilio Order instructions'
+    _controller: '\Drupal\food_twilio\Form\Partner\OrderController::orderInstructions'
+  requirements:
+    _permission: 'access content'
+    order_id: \d+
+

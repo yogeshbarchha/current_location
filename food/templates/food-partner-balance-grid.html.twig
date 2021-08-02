@@ -1,0 +1,53 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set header = element['#header'] %}
+{% set rows = element['#rows'] %}
+{% set total = element['#total'] %}
+{% set depositLink = element['#depositLink'] %}
+{% set account_number = element['#account_number'] %}
+
+<div class="row">
+	<div class="col-md-6">
+		<h3>Deposit to your account</h3>
+		<p>{{ depositLink }}</p>
+	</div>
+	<div class="col-md-6">
+		<!-- <p>Deposit frequency: Every two weeks</p>
+		<p> Next deposit:       <strong>Tuesday, January 9, 2018</strong></p> -->
+		<p>Account number:   <strong>{{ account_number }}</strong></p>
+		<!-- <p>Transactions from:   <strong>Sunday, December 24, 2017 - Sunday, January 7, 2018</strong></p>
+		<p>Note: Deposits may take 2-3 business days to show up in your account.</p> -->
+	</div>
+</div>
+
+<div class="table-responsive">
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+				{% for cell in header %}
+					<th>{{ cell.data }}</th>
+				{% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if rows is empty  %}
+        		<tr><td colspan={{ header | length }}><h4>No Records Found!</h4></td></tr>
+        	{% endif %}
+			{% for row in rows %}
+				<tr onclick="jQuery('#order-row-{{ row.order.order_id }}').toggle()">
+					{% for cell in header %}
+						<td>{{ row.data[cell.field] }}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+           
+        </tbody>
+       <!--  <tfoot>
+            <tr>
+            	<td colspan="4"></td>
+        		<td><b> {{ total }} </b></td>
+            </tr>
+        </tfoot> -->
+    </table>
+</div>

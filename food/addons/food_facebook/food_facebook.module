@@ -1,0 +1,62 @@
+<?php
+
+use Imbibe\Util\PhpHelper;
+
+function food_facebook_form_user_login_form_alter(&$form, $form_state) {
+	$form['actions']['facebook_sign_in'] = array(
+		'#type' => 'submit',
+		'#value' => t('Sign in with Facebook'),
+		'#attributes' => array(
+			'class' => array(
+				'food_facebook_signin_button',
+			)
+		),
+	);
+
+	$form['#attached']['library'][] = 'food_facebook/oauth2';
+}
+
+function food_facebook_form_food_user_signup_form_alter(&$form, $form_state) {
+	$form['facebook_sign_in'] = array(
+		'#type' => 'submit',
+		'#value' => t('Sign up with Facebook'),
+		'#attributes' => array(
+			'class' => array(
+				'food_facebook_signin_button',
+			)
+		),
+	);
+	
+	$form['#attached']['library'][] = 'food_facebook/oauth2';
+}
+
+function food_facebook_form_food_platform_settings_form_alter(&$form, $form_state) {
+	$entity = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	$form['facebook_settings'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Facebook settings'),
+	);
+	$form['facebook_settings']['facebook_page_url'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Page Url'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['facebook_settings', 'page_url']),
+	);
+	$form['facebook_settings']['facebook_client_id'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Client Id'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['facebook_settings', 'client_id']),
+	);
+	$form['facebook_settings']['facebook_client_secret'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Client secret'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['facebook_settings', 'client_secret']),
+	);
+	
+	$form['#platform_settings_callback'][] = function(&$entity, &$form, $form_state) {
+		$entity->facebook_settings = new \Drupal\food_facebook\Core\Platform\FacebookSettings();
+        $entity->facebook_settings->client_id = $form_state->getValue('facebook_client_id');
+        $entity->facebook_settings->client_secret = $form_state->getValue('facebook_client_secret');		
+        $entity->facebook_settings->page_url = $form_state->getValue('facebook_page_url');		
+	};
+}

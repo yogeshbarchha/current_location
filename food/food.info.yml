@@ -1,0 +1,5 @@
+name: Food
+description: Provides features and functions to manage restaurants and their menus
+package: Food
+type: module
+core: 8.x

@@ -1,0 +1,39 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set restaurant = element.additionalData.restaurant %}
+{% set deals = element.additionalData.restaurant.deals %}
+<div>
+    <div>
+        <div class="deals-section-current-deals">Current Deals</div>
+    </div>
+    <div>
+        <div>
+            <div class="deals-section-restaurant-name">Total {{ deals|length }} Deals of {{ restaurant.name }}</div>
+			{% for deal in deals %}
+				<div>
+					<div>
+						<div>
+							<div>
+								<div class="deals-section-discount-main">
+									<span class="deals-serial-num">
+										<span>Deal. {{ loop.index }}</span>
+									</span>
+									<span class="deals-discount">
+										<span>Discount</span>
+										<span>{{ deal.discount_pct }}</span>
+										<span>%</span>
+									</span>
+									<span class="deals-min-order">
+										<span>Min. Order Amount {{ currencySymbol }}{{ deal.min_order_amount }}</span>
+									</span>
+									<div class="clear"></div>
+									<p>Note: {{ currencySymbol }}{{ deal.min_order_amount }} is Min. Amount for this deal. And you will get {{ deal.discount_pct }}% flat</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>			
+			{% endfor %}
+        </div>
+    </div>
+</div>

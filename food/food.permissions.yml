@@ -1,0 +1,89 @@
+food restaurant access dashboard:
+  title: 'Food Restaurant Access Dashboard'
+  description: 'Allow user to access dashboard'
+  restrict access: false
+
+food view order history:
+  title: 'Food View Order History'
+  description: 'Allow user to view order history'
+  restrict access: true
+
+food view restaurant list:
+  title: 'Food View Restaurant List '
+  description: 'Allow user to view restaurant listing'
+  restrict access: true
+
+food add restaurant:
+  title: 'Food Add Restaurant'
+  description: 'Allow user to add restaurant'
+  restrict access: true
+
+food copy restaurant:
+  title: 'Food Copy Restaurant'
+  description: 'Allow user to copy restaurant'
+  restrict access: true
+
+food edit restaurant:
+  title: 'Food Edit Restaurant'
+  description: 'Allow user to edit restaurant'
+  restrict access: true
+
+food view restaurant menu list:
+  title: 'Food View Restaurant Menu List'
+  description: 'Allow user to view restaurant menu listing'
+  restrict access: true
+
+food add restaurant menu:
+  title: 'Food Add Restaurant Menu'
+  description: 'Allow user to add restaurant menu'
+  restrict access: true
+
+food delete restaurant menu:
+  title: 'Food Delete Restaurant Menu'
+  description: 'Allow user to delete restaurant menu'
+  restrict access: true
+
+food restaurant section operation:
+  title: 'Food Restaurant Section Operation'
+  description: 'Allow user to access restaurant section operation'
+  restrict access: true
+
+food restaurant cuisine operation:
+  title: 'Food Restaurant Cuisine Operation'
+  description: 'Allow user to access restaurant cuisine operation'
+  restrict access: true
+
+food restaurant order operation:
+  title: 'Food Restaurant Order Operation'
+  description: 'Allow user to access restaurant order operation'
+  restrict access: true
+
+food restaurant report dashboard access:
+  title: 'Food Restaurant Report Dashboard Access'
+  description: 'Allow user to access restaurant report dashboard access'
+  restrict access: true
+
+food restaurant view order detail:
+  title: 'Food Restaurant View Order Detail'
+  description: 'Allow user to access food restaurant view order detail'
+  restrict access: true
+
+food restaurant view report statement:
+  title: 'Food Restaurant View Report Statement'
+  description: 'Allow user to view restaurant report statement'
+  restrict access: true
+
+food restaurant view order adjustment:
+  title: 'Food Restaurant View Order Adjustment'
+  description: 'Allow user to view restaurant order adjustment'
+  restrict access: true
+
+food restaurant add order adjustment:
+  title: 'Food Restaurant add Order Adjustment'
+  description: 'Allow user to add restaurant order adjustment'
+  restrict access: true
+  
+food shortcut menu access:
+  title: 'Food Restaurant Shortcut Menu Access'
+  description: 'Allow user to access shortcut menu'
+  restrict access: true

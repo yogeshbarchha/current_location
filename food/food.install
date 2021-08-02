@@ -1,0 +1,1048 @@
+<?php
+
+function food_schema() {
+  $schema['cache_food'] = array(
+    'primary key' => array('id'),
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'hash' => array(
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => TRUE,
+      ),
+      'key' => array(
+        'type' => 'varchar',
+        'length' => 10000,
+        'not null' => TRUE,
+        'binary' => TRUE,
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => TRUE,
+        'size' => 'big',
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'cache_food_hash' => array('hash'),
+    ),
+  );
+
+  $schema['food_otp'] = array(
+    'primary key' => array('otp_id'),
+    'fields' => array(
+      'otp_id' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'phone_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'otp' => array(
+        'type' => 'varchar',
+        'length' => 10,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+  );
+
+  $schema['food_menu'] = array(
+    'primary key' => array('menu_id'),
+    'fields' => array(
+      'menu_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+  );
+
+  $schema['food_cuisine'] = array(
+    'primary key' => array('cuisine_id'),
+    'fields' => array(
+      'cuisine_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'featured' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'image_fid' => array(
+        'type' => 'int',
+      ),
+    ),
+  );
+
+  $schema['food_restaurant'] = array(
+    'primary key' => array('restaurant_id'),
+    'fields' => array(
+      'restaurant_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'featured_restaurant' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'payment_accept_mode' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'image_fid' => array(
+        'type' => 'int',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'phone_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'fax_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+      ),
+      'email' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+      'address_line1' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'address_line2' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+      'city' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'state' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'postal_code' => array(
+        'type' => 'varchar',
+        'length' => 25,
+        'not null' => TRUE,
+      ),
+      'country' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'latitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+        'not null' => TRUE,
+      ),
+      'longitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+        'not null' => TRUE,
+      ),
+      'about_summary' => array(
+        'type' => 'text',
+      ),
+      'about_detailed' => array(
+        'type' => 'text',
+      ),
+      'tag_line' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'speciality' => array(
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'order_contact_details' => array(
+        'type' => 'text',
+      ),
+      'order_types' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'order_constraints' => array(
+        'type' => 'text',
+      ),
+      'timings' => array(
+        'type' => 'text',
+      ),
+      'delivery_area_type' => array(
+        'type' => 'int',
+      ),
+      'delivery_radius' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 7,
+      ),
+      'delivery_polygon' => array(
+        'type' => 'text',
+      ),
+      'user_payment_settings' => array(
+        'type' => 'text',
+      ),
+      'settlement_payment_settings' => array(
+        'type' => 'text',
+      ),
+      'platform_settings' => array(
+        'type' => 'text',
+      ),
+      'deals' => array(
+        'type' => 'text',
+      ),
+      'tax_pct' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'url_slug' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+    ),
+  );
+
+  $schema['food_restaurant_menu'] = array(
+    'primary key' => array('restaurant_menu_id'),
+    'fields' => array(
+      'restaurant_menu_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'menu_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+  );
+
+  $schema['food_restaurant_cuisine'] = array(
+    'primary key' => array('restaurant_cuisine_id'),
+    'fields' => array(
+      'restaurant_cuisine_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'cuisine_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+  );
+
+  $schema['food_restaurant_menu_item'] = array(
+    'primary key' => array('restaurant_menu_item_id'),
+    'fields' => array(
+      'restaurant_menu_item_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'menu_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_menu_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_menu_section_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'dish_id' => array(
+        'type' => 'int',
+      ),
+      'image_fid' => array(
+        'type' => 'int',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'price' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+      ),
+      'tax_pct' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+      ),
+      'variations' => array(
+        'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+  );
+
+  $schema['food_restaurant_menu_section'] = array(
+    'primary key' => array('restaurant_menu_section_id'),
+    'fields' => array(
+      'restaurant_menu_section_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'menu_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'restaurant_menu_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+  );
+
+  $schema['food_user_address'] = array(
+    'primary key' => array('address_id'),
+    'fields' => array(
+      'address_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'owner_user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'type' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'flags' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'contact_name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+      'phone_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+      ),
+      'fax_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+      ),
+      'email' => array(
+        'type' => 'varchar',
+        'length' => 100,
+      ),
+      'address_line1' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'address_line2' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+      'city' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'state' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'postal_code' => array(
+        'type' => 'varchar',
+        'length' => 25,
+        'not null' => TRUE,
+      ),
+      'country' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'latitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+      ),
+      'longitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+  );
+
+  $schema['food_user_cart'] = array(
+    'primary key' => array('cart_id'),
+    'fields' => array(
+      'cart_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'session_id' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+      ),
+      'user_id' => array(
+        'type' => 'int',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'search_mode' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'search_params' => array(
+        'type' => 'text',
+      ),
+      'order_details' => array(
+        'type' => 'text',
+      ),
+    ),
+    'indexes' => array(
+      'food_user_cart_session_id' => array('session_id'),
+    ),
+  );
+
+  $schema['food_user_auth_token'] = array(
+    'primary key' => array('user_auth_token_id'),
+    'fields' => array(
+      'user_auth_token_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'token' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'food_user_auth_token_user_id' => array('user_id'),
+    ),
+  );
+
+  $schema['food_order'] = array(
+    'primary key' => array('order_id'),
+    'fields' => array(
+      'order_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'cart_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'processed_by' => array(
+        'type' => 'int',
+      ),
+      'processed_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'delivery_mode' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'payment_mode' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'net_amount' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+      ),
+      'order_details' => array(
+        'type' => 'text',
+      ),
+      'user_name' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+      'user_address_id' => array(
+        'type' => 'int',
+      ),
+      'user_phone' => array(
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+      ),
+      'user_apartment_number' => array(
+        'type' => 'varchar',
+        'length' => 50,
+      ),
+      'user_address' => array(
+        'type' => 'varchar',
+        'length' => 100,
+      ),
+      'user__ip_address' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+      'instructions' => array(
+        'type' => 'varchar',
+        'length' => 100,
+      ),
+      'meta' => array(
+        'type' => 'text',
+      ),
+    ),
+  );
+
+  $schema['food_order_charge'] = array(
+    'primary key' => array('order_charge_id'),
+    'fields' => array(
+      'order_charge_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'order_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'charge_type' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'transaction_date' => array(
+        'type' => 'varchar',
+        'length' => 25,
+        'not null' => TRUE,
+      ),
+      'amount' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'created_time' => array(
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+  );
+
+  $schema['food_dish'] = array(
+    'primary key' => array('dish_id'),
+    'fields' => array(
+      'dish_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'image_fid' => array(
+        'type' => 'int',
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'url_slug' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+    ),
+  );
+
+  $schema['food_service_area'] = array(
+    'primary key' => array('service_area_id'),
+    'fields' => array(
+      'service_area_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'changed' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'address' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'country' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'latitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+      ),
+      'longitude' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 8,
+      ),
+      'radius' => array(
+        'type' => 'numeric',
+        'precision' => 15,
+        'scale' => 7,
+        'not null' => TRUE,
+      ),
+      'image_fid' => array(
+        'type' => 'int',
+      ),
+      'description' => array(
+        'type' => 'text',
+      ),
+      'url_slug' => array(
+        'type' => 'varchar',
+        'length' => 500,
+      ),
+    ),
+  );
+
+  return $schema;
+}
+
+/*
+//Updating entity fields: https://drupal.stackexchange.com/a/204443
+function food_update_8xxx() {
+  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+}
+*/
+function food_update_8001() {
+  $schema['food_history'] = [
+    'description' => 'Check Restaurant updated status',
+    'fields' => [
+      'uid' => [
+        'description' => "The id of the visitor.",
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'restaurant_id' => [
+        'description' => "The id of the restaurant.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+      'timestamp' => [
+        'description' => "Restaurant visit time.",
+        'type' => 'int',
+        'not null' => TRUE,
+      ],
+    ],
+  ];
+
+  db_create_table('food_history', $schema['food_history']);
+
+}
+
+function food_update_8002() {
+
+  $schema['food_deposit_account_history'] = array(
+    'primary key' => array('did'),
+    'fields' => array(
+      'did' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'restaurant_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'amount' => array(
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 3,
+      ),
+      'transaction_id' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'comment' => array(
+        'type' => 'text',
+      ),
+      'depositor_uid' => array(
+        'description' => "The uid of the depositor.",
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'deposit_date' => array(
+        'type' => 'varchar',
+        'size' => 255,
+        'not null' => TRUE,
+      ),
+    ),
+  );
+
+  db_create_table('food_deposit_account_history',
+    $schema['food_deposit_account_history']);
+
+}
+
+function food_update_8003() {
+  $food_order_charge_notification = array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+
+  db_add_field('food_order_charge', 'notification',
+    $food_order_charge_notification);
+
+  $food_order_notification = array(
+    'type' => 'text',
+    'not null' => FALSE,
+    'default' => NULL,
+  );
+
+  db_add_field('food_order', 'notification', $food_order_notification);
+}
+
+function food_update_8005() {
+
+  $schema['review_questions'] = array(
+    'primary key' => array('question_id'),
+    'fields' => array(
+      'question_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'question_name' => array(
+        'type' => 'varchar',
+        'length' => 500,
+        'not null' => TRUE,
+      ),
+      'question_positionID' => array(
+       'type' => 'int',
+       'not null' => TRUE,
+       'default' => 0,
+      ),
+    ),
+  );
+  
+  $schema['user_review'] = array(
+    'primary key' => array('rating_id'),
+    'fields' => array(
+      'rating_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'order_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'rating_number' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'total_points' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'modified' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'user_id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'review_details' => array(
+       'type' => 'text',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+      ),
+    ),
+  );
+  
+  db_create_table('review_questions',$schema['review_questions']);
+  db_create_table('user_review',$schema['user_review']);
+
+}
+
+function food_update_8006(){
+
+   $spec = array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 1,
+    'size' => 'tiny',
+  ); 
+  db_add_field('review_questions', 'status', $spec);
+}

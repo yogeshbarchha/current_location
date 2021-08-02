@@ -1,0 +1,126 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+
+<div class="col-sm-12">
+	<div class="col-sm-3 restaurant-listing-filter-section">
+	{% if element['#user_last_order'][0] is not empty %}
+
+			<div class="restaurant-list-cards">
+				<h3>Your Last Order</h3>
+				<div class="clearfix">
+					
+					<div class="restaurant-cards-details col-lg-12 col-md-8 col-sm-8 col-xs-12">
+                                                
+						<div class="col-lg-8 col-md-7 col-sm-5 col-xs-12">
+							<a href="{{ order.restaurant.restaurant_url }}" alt="{{ restaurant.name }}" class="restaurant-name">{{ element['#user_last_order'][0].restaurant.name }}</a> 
+						</div>
+						<div class="col-lg-4 col-md-5 col-sm-7 col-xs-12">
+							<span>{{ currencySymbol }}{{ element['#user_last_order'][0].order_details.breakup.net_amount }}</span>
+						</div>
+
+						<div class="col-md-8">
+							<p class="restaurant-list-card-distance">
+								<span class="type-secondary" >
+									<i class="fa fa-cutlery" aria-hidden="true"></i>
+									<b><a href="{{ order.confirmation_link }}">Order Id : {{ platform_settings.order_settings.order_number_prefix }}# {{ element['#user_last_order'][0].order_id }}</a></b>
+								</span><br/>
+							</p>
+							<p class="restaurant-list-card-min-order"> 
+								<span class="type-secondary" >
+									<i class="fa fa-clock-o" aria-hidden="true"></i> 
+									{{ element['#user_last_order'][0].derived_fields.created_time_formatted }} 
+								</span><br>
+							</p>
+							<p class="restaurant-list-card-cuisine">
+								<span class="type-secondary" >
+									<i class="fa fa-map-marker" aria-hidden="true"></i> 
+									{% if element['#user_last_order'][0].order_details.delivery_mode == 1 %} Delivery to {{ element['#user_last_order'][0].user_address }} {% else %} Pickup to {{ element['#user_last_order'][0].restaurant.derived_fields.formatted_address }}{% endif %}   
+								</span>
+							</p>
+							{% set items = element['#user_last_order'][0].order_details.items %}
+							{% for item in items %}
+								<div class="s-row" >
+									<div class="s-col-xs-12">
+										<div class="u-border-bottom u-padding-top-default u-padding-bottom-default" style="float:left; width:100%;">
+										   <span class="my-order-items-main">
+												<span class="u-padding-right-large my-order-item-quantity" >{{ item.quantity }}</span>
+												<span class="my-order-item-name">{{ item.item_name }}</span>
+												<span class="type-secondary my-order-item-amount">{{ currencySymbol }}{{ item.item_total_amount }}</span>
+											</span>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+
+						<div class="col-md-4">
+							{% if element['#user_last_order'][0].status == statusSubmit %}
+								{% set order_status = "Order Pending" %}
+								{% set order_button_color = "btn-pending" %}
+							{% elseif element['#user_last_order'][0].status == statusConfirmend %}
+								{% set order_status = "Order Confirmed" %}
+								{% set order_button_color = "btn-confirmed" %}
+							{% else %}
+								{% set order_status = " Order Cancelled" %}
+								{% set order_button_color = "btn-cancelled" %}
+							{% endif %}
+							<br />
+							{% if element['#user_last_order'][0].rating is not empty %}
+							<div class="star-rating">
+								{% for i in 1..element['#user_last_order'][0].rating %}
+									<span style="font-family: 'Glyphicons Halflings';color: #fec42d" class="glyphicon glyphicon-star"></span>
+								{% endfor %}
+							</div>
+							{% endif %}
+							<!-- <p class="restaurant-list-card-delivery-time">
+								<input type="button" class="btn {{ order_button_color }}" value="{{ order_status }}"/>
+							</p> -->
+							<p class="order-review_link" style="text-align: right;">
+							{{ element['#user_last_order'][0].review_link }}
+							{{ element['#user_last_order'][0].reorder_link }}
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		{% endif %}
+		
+		{{ element['#restaurant_filter_form_html'] }}
+	</div>
+
+	<div class="col-sm-9 restaurant-listing-result-section">
+	    
+	    
+		<div class="restaurant-listing-sorting-section">
+			<div class="col-sm-9">
+				<span id="restaurant-search-message">
+				</span>
+			</div>
+
+			<div class="col-sm-3">
+				<div class="form-group">
+				  <label for="sel1">Sort By:</label>
+				  <select class="form-control" id="sel1">
+					<!--<option>Popularity</option>
+					<option>Rating</option>-->
+					<option>Distance</option>
+				  </select>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-12">
+			<div class="loading-indicator">
+				<div class="mask">
+				</div>
+				<div class="animation">
+				</div>
+			</div>
+			<div id="restaurant-search-result" class="col-sm-12">
+			</div>
+		</div>
+	</div>
+</div>
+

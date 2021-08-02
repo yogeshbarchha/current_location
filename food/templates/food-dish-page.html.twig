@@ -1,0 +1,17 @@
+<div class="col-sm-12">
+	<div class="food-restaurant-search-host food-restaurant-search-host-dish">
+		<div>
+			<h2 class="food-restaurant-search-host-name">{{ element.additionalData.dish.name }}</h2>
+		</div>
+		<div class="col-md-3 col-xs-12">
+			<img src="{{ element.additionalData.dish.image_url ? element.additionalData.dish.image_url : '/themes/food_theme/images/restaurant-image.jpg' }}" class="food-restaurant-search-host-picture" />
+		</div>
+		<div class="col-md-9 col-xs-12">
+			{{ element.additionalData.dish.description|raw }}
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		{{ element.restaurant_list }}
+	</div>
+</div>

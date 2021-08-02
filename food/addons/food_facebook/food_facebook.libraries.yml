@@ -1,0 +1,18 @@
+#Facebook libraries
+oauth2:
+  version: 1.x
+  js:
+    resources/js/OAuth/OAuth2.js: {}
+  dependencies:
+    - core/jquery
+    - food/common
+
+oauth2callback:
+  version: 1.x
+  js:
+    resources/js/OAuth/OAuth2Callback.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - food/common
+

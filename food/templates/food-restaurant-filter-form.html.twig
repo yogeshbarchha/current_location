@@ -1,0 +1,77 @@
+{# https://www.drupal.org/node/2788835#comment-11785706 #}
+{# form tag is not necessary in this template, because Drupal adds a theme wrapper to the form that take care of create this tag with the right attributes. I also discover that if the id of the form is equal to the name of the theme function you dont'n need to include the line $form['#theme'] = 'food_restaurant_search_form' #}
+{{ form.form_build_id }}
+{{ form.form_token }}
+{{ form.form_id }}
+
+{% set platform_settings = food_platform_settings() %}
+
+<!-- filter sidebar -->
+<div id="filter-sidebar" class="col-xs-12 visible-sm visible-md visible-lg collapse sliding-sidebar">
+	<a href="#" role="button" class="btn food-restaurant-filter-clear" style="float: right" title="Clear filters">Clear Filters</a>
+	<h1>Filters</h1>
+	<div>
+		<h4 data-toggle="collapse" data-target="#group-1"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Delivery/Pickup</h4>
+		<div id="group-1" class="list-group collapse in">
+		  <a class="list-group-item" href="#"><input type="checkbox" data-name="delivery_mode" value="1" id="chk-delivery-mode-delivery"><label for="chk-delivery-mode-delivery">Delivery</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" data-name="delivery_mode" value="2" id="chk-delivery-mode-pickup"><label for="chk-delivery-mode-pickup">Pickup</label></a>
+		</div>
+	</div>
+  
+	<div>
+		<h4 data-toggle="collapse" data-target="#group-2"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Restaurant</h4>
+		<div id="group-2" class="list-group collapse in">
+		  <a class="list-group-item" href="#"><input type="checkbox" data-name="restaurant_open_status" value="1" id="chk-restaurant-status-open"><label for="chk-restaurant-status-open">Open</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" data-name="restaurant_open_status" value="2" id="chk-restaurant-status-closed"><label for="chk-restaurant-status-closed">Closed</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" data-name="restaurant_open_status" value="0" id="chk-restaurant-status-both"><label for="chk-restaurant-status-both">Both</label></a>
+		</div>
+	</div>
+  
+	<div>
+		<h4 data-toggle="collapse" data-target="#group-3"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Cuisines</h4>
+		<div id="group-3" class="list-group collapse in">
+			{% for cuisine in form.cuisines %}
+				<a class="list-group-item" href="#"><input type="checkbox" value="{{ cuisine.cuisine_id }}" data-name="cuisine" id="chk-cuisine-{{ cuisine.cuisine_id }}"><label for="chk-cuisine-{{ cuisine.cuisine_id }}">{{ cuisine.name }}</label></a>
+			{% endfor %}
+		</div>
+	</div>
+  
+	{% if form.service_areas|length > 0 %}
+		<div>
+			<h4 data-toggle="collapse" data-target="#group-3"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Areas</h4>
+			<div id="group-3" class="list-group collapse in">
+				{% for service_area in form.service_areas %}
+					<a class="list-group-item" href="#"><input type="checkbox" value="{{ service_area.service_area_id }}" data-name="service_area" id="chk-service_area-{{ service_area.service_area_id }}"><label for="chk-service_area-{{ service_area.service_area_id }}">{{ service_area.name }}</label></a>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+  
+	{% if form.dishes|length > 0 %}
+		<div>
+			<h4 data-toggle="collapse" data-target="#group-3"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Dishes</h4>
+			<div id="group-3" class="list-group collapse in">
+				{% for dish in form.dishes %}
+					<a class="list-group-item" href="#"><input type="checkbox" value="{{ dish.dish_id }}" data-name="dish" id="chk-dish-{{ dish.dish_id }}"><label for="chk-dish-{{ dish.dish_id }}">{{ dish.name }}</label></a>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+  
+	<div>
+		<h4 data-toggle="collapse" data-target="#group-4"><i class="fa fa-fw fa-caret-down parent-expanded"></i><i class="fa fa-fw fa-caret-right parent-collapsed"></i>Distance</h4>
+		<div id="group-4" class="list-group collapse in">
+		  <a class="list-group-item" href="#"><input type="checkbox" value="1" data-name="distance" id="chk-delivery-distance-1"><label for="chk-delivery-distance-1">1 {{ platform_settings.use_miles ? 'mile' : 'km' }}</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" value="2" data-name="distance" id="chk-delivery-distance-2"><label for="chk-delivery-distance-2">2 {{ platform_settings.use_miles ? 'miles' : 'kms' }}</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" value="3" data-name="distance" id="chk-delivery-distance-3"><label for="chk-delivery-distance-3">3 {{ platform_settings.use_miles ? 'miles' : 'kms' }}</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" value="4" data-name="distance" id="chk-delivery-distance-4"><label for="chk-delivery-distance-4">4 {{ platform_settings.use_miles ? 'miles' : 'kms' }}</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" value="5" data-name="distance" id="chk-delivery-distance-5"><label for="chk-delivery-distance-5">5 {{ platform_settings.use_miles ? 'miles' : 'kms' }}</label></a>
+		  <a class="list-group-item" href="#"><input type="checkbox" value="10" data-name="distance" id="chk-delivery-distance-10"><label for="chk-delivery-distance-10">10 {{ platform_settings.use_miles ? 'miles' : 'kms' }}</label></a>
+		</div>
+	</div>
+	
+	<div>
+		<button type="button" class="btn btn-primary food-restaurant-filter-clear">Clear filters</button>
+	</div>
+	  
+</div>

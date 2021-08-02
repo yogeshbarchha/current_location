@@ -1,0 +1,43 @@
+.ShortcutMenuContent{
+	width: 65%;
+	position: absolute;
+	/*height: 500px;*/
+	/*margin-top: 50px;*/
+	top: 60px;
+	z-index: 1000;
+    background: #fff;
+    padding: 20px;
+    /*display: none;*/
+}
+
+.ShortcutMenuContent #status_update, .ShortcutMenuContent #open_close_update, .ShortcutMenuContent #pick_del_update{
+	/*display: none;*/
+}
+
+
+/*.collapse {    
+    display: none;
+
+}*/
+
+
+.ShortcutMenuContent .show-form {
+float:right;
+cursor:pointer;
+}
+
+
+.ShortcutMenuContent .notification-count{
+	color: red;
+}
+.ShortcutMenuContent .restaurant-notifications ul {
+	list-style: none;
+}
+.ShortcutMenuContent .restaurant-notifications ul li {
+	padding: 10px;
+}
+.ShortcutMenuContent .restaurant-notifications ul li a {
+	float: none;
+	padding: 0;
+	padding-left: 10px;
+}

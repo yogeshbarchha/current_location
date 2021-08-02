@@ -1,0 +1,210 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set order_header = element['#order_header'] %}
+{% set order_rows = element['#order_rows'] %}
+{% set adjustment_header = element['#adjustment_header'] %}
+{% set adjustment_rows = element['#adjustment_rows'] %}
+{% set chargeback_header = element['#chargeback_header'] %}
+{% set chargeback_rows = element['#chargeback_rows'] %}
+{% set total_order_header = element['#total_order_header'] %}
+{% set total_order_row = element['#total_order_row'] %}
+{% set total_order_header_till_now = element['#total_order_header_till_now'] %}
+{% set total_order_row_till_now = element['#total_order_row_till_now'] %}
+{% set pager = element['#pager'] %}
+{% set pager1 = element['#pager1'] %}
+
+
+{% set cancel_order_total_rows = element['#cancel_order_total_rows'] %}
+
+{% set deposit_header = element['#deposit_header'] %}
+{% set deposit_row = element['#deposit_row'] %}
+
+{% set cancel_order_header = element['#cancel_order_header'] %}
+{% set cancel_order_row = element['#cancel_order_row'] %}
+    
+<div class="table-responsive">
+    <div id="table-container">
+    <table id="statment-order-table" class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+				{% for cell in order_header %}
+					<th>{{ cell.data }}</th>
+				{% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+
+    	{% for row in order_rows %}
+        				<tr onclick="jQuery('#order-row-{{ row.order.order_id }}').toggle()">
+        					{% for cell in order_header %}
+        						<td>{{ row.data[cell.field] }}</td>
+        					{% endfor %}
+        				</tr>
+        				<tr id="order-row-{{ row.order.order_id }}" style="display: none;">
+        					<td colspan="{{ order_header|length }}">
+        						{{ include('food-partner-order-detail.html.twig', {order: row.order}) }}
+        					</td>
+        				</tr>
+    	{% endfor %}
+
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+<div id="bottom_anchor"></div>
+</div>
+    {{ pager }}          
+    
+   
+    <h2>Summary</h2>    
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+              <th>{{ total_order_header.count }}</th>
+              <th>{{ total_order_header.gross_subtotal }}</th>
+              <th>{{ total_order_header.total_cash }}</th>
+              <th>{{ total_order_header.total_cc }}</th>
+              <th>{{ total_order_header.total_tip }}</th>
+              <th>{{ total_order_header.total_tax }}</th>
+              <th>{{ total_order_header.net_sales }}</th>
+              <th>{{ total_order_header.total_adjustment }}</th>
+
+              <th>{{ total_order_header.partner_discount }}</th>
+              <th>{{ total_order_header.platform_discount }}</th>
+              <th>{{ total_order_header.total_commission }}</th>
+              <th>{{ total_order_header.total_processing_fee_amount }}</th>
+              <th>{{ total_order_header.total_debit_credit }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+              <th>{{ total_order_row.count }}</th>
+              <th>{{ total_order_row.gross_subtotal }}</th>
+              <th>{{ total_order_row.total_cash }}</th>
+              <th>{{ total_order_row.total_cc }}</th>
+              <th>{{ total_order_row.total_tip }}</th>
+              <th>{{ total_order_row.total_tax }}</th>
+              <th>{{ total_order_row.net_sales }}</th>
+              <th>{{ total_order_row.total_adjustment }}</th>
+              <th>{{ total_order_row.partner_discount }}</th>
+              <th>{{ total_order_row.platform_discount }}</th>
+              <th>{{ total_order_row.total_commission }}</th>
+              <th>{{ total_order_row.total_processing_fee_amount }}</th>
+              <th>{{ total_order_row.total_debit_credit }}</th>
+            </tr>
+        </tbody>
+    </table>
+<h2>Summary Till Now</h2>    
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+              <th>{{ total_order_header_till_now.count }}</th>
+              <th>{{ total_order_header_till_now.gross_subtotal }}</th>
+              <th>{{ total_order_header_till_now.total_cash }}</th>
+              <th>{{ total_order_header_till_now.total_cc }}</th>
+              <th>{{ total_order_header_till_now.total_tip }}</th>
+              <th>{{ total_order_header_till_now.total_tax }}</th>
+              <th>{{ total_order_header_till_now.net_sales }}</th>
+             <th>{{ total_order_header_till_now.total_adjustment }}</th>
+              <th>{{ total_order_header_till_now.partner_discount }}</th>
+              <th>{{ total_order_header_till_now.platform_discount }}</th>
+              <th>{{ total_order_header_till_now.total_commission }}</th>
+              <th>{{ total_order_header_till_now.total_processing_fee_amount }}</th>
+              <th>{{ total_order_header_till_now.total_debit_credit }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+              <th>{{ total_order_row_till_now.count_total }}</th>
+              <th>{{ total_order_row_till_now.gross_subtotal }}</th>
+              <th>{{ total_order_row_till_now.total_cash }}</th>
+              <th>{{ total_order_row_till_now.total_cc }}</th>
+              <th>{{ total_order_row_till_now.total_tip }}</th>
+              <th>{{ total_order_row_till_now.total_tax }}</th>
+              <th>{{ total_order_row_till_now.net_sales }}</th>
+              <th>{{ total_order_row_till_now.total_adjustment }}</th>
+              <th>{{ total_order_row_till_now.partner_discount }}</th>
+              <th>{{ total_order_row_till_now.platform_discount }}</th>
+              <th>{{ total_order_row_till_now.total_commission }}</th>
+              <th>{{ total_order_row_till_now.total_processing_fee_amount }}</th>
+              <th>{{ total_order_row_till_now.total_debit_credit }}</th>
+            </tr>
+        </tbody>
+    </table>
+    <h2>Deposit</h2>  
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+    {% set deposit_total = 0 %}
+        <thead>
+          <tr>
+            {% for cell in deposit_header %}
+                <th>{{ cell.data }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in deposit_row %}
+              <tr>
+                {% set deposit_total = deposit_total + row.data['amount'] %}
+                {% for cell in deposit_header %}
+                    <td>{{ row.data[cell.field] }}</td>
+                {% endfor %}
+              </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4"><strong>Total Deposit</td></strong></td>
+            <td><strong>{{ deposit_total|number_format(2, '.', ',') }}</strong></td>
+          </tr>
+          <tr>
+            {% if total_order_row.total_debit_credit >= 0 %}
+              <td colspan="4"><strong>Amount Due</td></strong></td>
+              <td><strong>{{ (total_order_row.total_debit_credit - deposit_total)|number_format(2, '.', ',') }}</strong></td>
+            {% elseif total_order_row.total_debit_credit <= 0 %}
+              <td colspan="4"><strong>Amount Payable</td></strong></td>
+              <td><strong>{{ (total_order_row.total_debit_credit + deposit_total)|number_format(2, '.', ',') }}</strong></td>
+            {% endif %}
+          </tr>
+        </tfoot>
+    </table>
+    <h2>Cancel Orders</h2>
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+        {% for cell in cancel_order_header %}
+          <th>{{ cell.data }}</th>
+        {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+      {% for row in cancel_order_row %}
+        <tr onclick="jQuery('#order-row-{{ row.order.order_id }}').toggle()">
+          {% for cell in cancel_order_header %}
+            <td>{{ row.data[cell.field] }}</td>
+          {% endfor %}
+        </tr>
+        <tr id="order-row-{{ row.order.order_id }}" style="display: none;">
+          <td colspan="{{ order_header|length }}">
+            {{ include('food-partner-order-detail.html.twig', {order: row.order}) }}
+          </td>
+        </tr>
+      {% endfor %}
+        </tbody>
+        <tfoot>
+        {% set cancel_order_total = 0 %}
+        {% for row in cancel_order_total_rows %}
+          {% set cancel_order_total = cancel_order_total + row.order_details.breakup.net_amount %}
+        {% endfor %}
+          <tr>
+            <td colspan="8"><strong>Total</td></strong></td>
+            <td colspan="8"><strong>{{ cancel_order_total | number_format(2, '.', ',') }}</td></strong></td>
+          </tr>
+        </tfoot>
+    </table>
+    {{ pager1 }}
+      
+</div>

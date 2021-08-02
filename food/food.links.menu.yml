@@ -1,0 +1,82 @@
+#Admin links
+food_restaurant.admin.structure.settings:
+  title: Restaurant Settings
+  description: 'Configure Restaurant entity'
+  route_name: food.restaurant_settings
+  parent: system.admin_structure
+
+
+#User links
+food.user.profile:
+  title: 'My Profile'
+  description: 'My Profile'
+  route_name: food.user.profile
+  menu_name: hypothetical
+  weight: 100
+
+food.user.address.list:
+  title: 'Addresses'
+  description: 'My Addresses'
+  route_name: food.user.address.list
+  menu_name: hypothetical
+  weight: 101
+
+
+#Platform links
+food.platform.user.list:
+  title: 'Users'
+  description: 'User List'
+  route_name: food.platform.user.list
+  menu_name: tools
+  weight: 106
+
+
+#Partner links
+food.partner.report.dashboard:
+  title: 'Live Orders'
+  description: 'Live Orders'
+  route_name: food.partner.report.dashboard
+  menu_name: tools
+  weight: 101
+
+food.partner.report.liveorders:
+  title: 'Orders History'
+  description: 'Orders History'
+  route_name: food.partner.report.liveorders
+  menu_name: tools
+  weight: 102
+
+food.partner.report.statement:
+  title: 'Statement'
+  description: 'Statement'
+  route_name: food.partner.report.statement
+  menu_name: tools
+  weight: 103
+
+food.partner.report.financialstatement:
+  title: 'Financial Statement'
+  description: 'Financial Statement'
+  route_name: food.partner.report.financialstatement
+  menu_name: tools
+  weight: 104
+
+food.partner.report.currentbalance:
+  title: 'Current Balance'
+  description: 'Restaurant Current Balance'
+  route_name: food.partner.report.currentbalance
+  menu_name: tools
+  weight: 105
+
+food.partner.chargeback:
+  title: 'Chargebacks'
+  description: 'Chargebacks'
+  route_name: food.partner.chargeback
+  menu_name: tools
+  weight: 106
+
+food.partner.adjustment:
+  title: 'Adjustments'
+  description: 'Adjustments'
+  route_name: food.partner.adjustment
+  menu_name: tools
+  weight: 107

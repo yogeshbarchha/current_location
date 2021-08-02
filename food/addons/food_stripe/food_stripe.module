@@ -1,0 +1,92 @@
+<?php
+
+use Imbibe\Util\PhpHelper;
+
+function food_stripe_form_food_platform_settings_form_alter(&$form, $form_state) {
+	$entity = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	$form['stripe_settings'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Stripe settings'),
+	);
+	$form['stripe_settings']['stripe_test_publishable_api_key'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Test Publishable Api Key'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['stripe_settings', 'test_publishable_api_key']),
+	);
+	$form['stripe_settings']['stripe_test_secret_api_key'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Test Secret Api Key'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['stripe_settings', 'test_secret_api_key']),
+	);
+	$form['stripe_settings']['stripe_live_publishable_api_key'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Live Publishable Api Key'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['stripe_settings', 'live_publishable_api_key']),
+	);
+	$form['stripe_settings']['stripe_live_secret_api_key'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Live Secret Api Key'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['stripe_settings', 'live_secret_api_key']),
+	);
+	
+	$form['#platform_settings_callback'][] = function(&$entity, &$form, $form_state) {
+		$entity->stripe_settings = new \Drupal\food_stripe\Core\Platform\StripeSettings();
+        $entity->stripe_settings->test_publishable_api_key = $form_state->getValue('stripe_test_publishable_api_key');
+        $entity->stripe_settings->test_secret_api_key = $form_state->getValue('stripe_test_secret_api_key');
+        $entity->stripe_settings->live_publishable_api_key = $form_state->getValue('stripe_live_publishable_api_key');
+        $entity->stripe_settings->live_secret_api_key = $form_state->getValue('stripe_live_secret_api_key');
+	};
+}
+
+function food_stripe_form_food_user_cart_order_placement_form_alter(&$form, $form_state) {
+	$platform_settings = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	$form['#attached']['library'][] = 'food_stripe/order.placement';
+	$form['#attached']['drupalSettings']['food']['stripe'] = [
+		'test_publishable_api_key' => PhpHelper::getNestedValue($platform_settings, ['stripe_settings', 'test_publishable_api_key']),
+		'live_publishable_api_key' => PhpHelper::getNestedValue($platform_settings, ['stripe_settings', 'live_publishable_api_key']),
+	];
+
+	$form['payment_details']['card']['card_element'] = array(
+		'#type' => 'item',
+		'#title' => t('Credit or debit card'),
+		'#markup' => '<div id="card-element"></div>',
+	);
+	$form['payment_details']['card']['card_error'] = array(
+		'#type' => 'item',
+		'#markup' => '<div id="card-errors"></div>',
+	);
+	
+	$form['#food_form_validation_callback'][] = '_food_stripe_order_placement_form_validation_callback';
+}
+
+function _food_stripe_order_placement_form_validation_callback(&$cart, &$form, $form_state) {
+	if($cart->order_details->payment_mode == \Drupal\food\Core\Restaurant\PaymentMode::Card) {
+		try {
+			$token = $form_state->getValue('card_auth_token');
+			
+			food_stripe_create_charge($token, $cart->order_details->breakup->net_amount);
+		} catch(\Exception $ex) {
+            watchdog_exception('food', $ex);
+			$form_state->setErrorByName('card_element', t('An error has occurred:- ') . $ex->getMessage());
+		}
+	}
+}
+
+function food_stripe_create_charge($token, $amount) {
+	$platform_settings = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
+		\Stripe\Stripe::setApiKey($platform_settings->stripe_settings->live_secret_api_key);
+	} else {
+		\Stripe\Stripe::setApiKey($platform_settings->stripe_settings->test_secret_api_key);
+	}
+
+	$charge = \Stripe\Charge::create(array(
+		"amount" =>  $amount * 100,
+		"currency" => "usd",
+		"description" => \Drupal::currentUser()->getEmail(),
+		"source" => $token,
+	));
+}

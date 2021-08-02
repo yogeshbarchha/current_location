@@ -1,0 +1,17 @@
+services:
+  food_event_subscriber:
+    class: Drupal\food\Service\FoodEventSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  food_http_exception_subscriber:
+    class: Drupal\food\Service\FoodHttpExceptionSubscriber
+    tags:
+      - { name: event_subscriber }
+    arguments: ['@current_user']
+
+  food.twig.extension:
+    arguments: ['@renderer']
+    class: Drupal\food\Service\FoodTwigExtension
+    tags:
+      - { name: twig.extension }

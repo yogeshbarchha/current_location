@@ -1,0 +1,106 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set statusSubmit = constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Submitted') %}
+{% set statusConfirmend = constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Confirmed') %}
+{% set statusCancelled = constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Cancelled') %}
+
+<div class="my-order-cards-outer">
+	<div class="my-order-section-heading">My Orders</div>
+
+	{% for order in element.additionalData.orders %}
+		<div class="restaurant-list-cards">
+			<div class="clearfix">
+				<div class="restaurant-image col-lg-3 col-md-4 col-sm-4 col-xs-12">
+					<a href="{{ order.restaurant.restaurant_url }}">
+						{% if order.restaurant.image_url is not empty %}
+							{% set restaurant_image_url = order.restaurant.image_url %}
+						{% else %}
+							{% set restaurant_image_url = "/themes/food_theme/images/restaurant-image.jpg"  %}
+						{% endif %}
+						<img src="{{ restaurant_image_url }}" alt="restaurant-image" class="pull-left" width="161px" height="121px">
+					</a>
+				</div>
+				<div class="restaurant-cards-details col-lg-9 col-md-8 col-sm-8 col-xs-12">
+					<div class="col-lg-8 col-md-7 col-sm-5 col-xs-12">
+						<a href="{{ order.restaurant.restaurant_url }}" alt="{{ restaurant.name }}" class="restaurant-name">{{ order.restaurant.name }}</a> 
+					</div>
+					<div class="col-lg-4 col-md-5 col-sm-7 col-xs-12">
+						<span>{{ currencySymbol }}{{ order.order_details.breakup.net_amount }}</span>
+					</div>
+
+					<div class="col-md-8">
+						<p class="restaurant-list-card-distance">
+							<span class="type-secondary" >
+								<i class="fa fa-cutlery" aria-hidden="true"></i>
+								<b><a href="{{ order.confirmation_link }}">Order Id : {{ platform_settings.order_settings.order_number_prefix }}# {{ order.order_id }}</a></b>
+							</span><br/>
+						</p>
+						<p class="restaurant-list-card-min-order"> 
+							<span class="type-secondary" >
+								<i class="fa fa-clock-o" aria-hidden="true"></i> 
+								{{ order.derived_fields.created_time_formatted }} 
+							</span><br>
+						</p>
+						<p class="restaurant-list-card-cuisine">
+							<span class="type-secondary" >
+								<i class="fa fa-map-marker" aria-hidden="true"></i> 
+								{% if order.order_details.delivery_mode == 1 %} Delivery to {{ order.user_address }} {% else %} Pickup to {{ order.restaurant.derived_fields.formatted_address }}{% endif %}   
+							</span>
+						</p>
+						{% set items = order.order_details.items %}
+						{% for item in items %}
+							<div class="s-row" >
+								<div class="s-col-xs-12">
+									<div class="u-border-bottom u-padding-top-default u-padding-bottom-default" style="float:left; width:100%;">
+									   <span class="my-order-items-main">
+											<span class="u-padding-right-large my-order-item-quantity" >{{ item.quantity }}</span>
+											<span class="my-order-item-name">{{ item.item_name }}</span>
+											<span class="type-secondary my-order-item-amount">{{ currencySymbol }}{{ item.item_total_amount }}</span>
+										</span>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+
+					<div class="col-md-4">
+						{% if order.status == statusSubmit %}
+							{% set order_status = "Order Pending" %}
+							{% set order_button_color = "btn-pending" %}
+						{% elseif order.status == statusConfirmend %}
+							{% set order_status = "Order Confirmed" %}
+							{% set order_button_color = "btn-confirmed" %}
+						{% else %}
+							{% set order_status = " Order Cancelled" %}
+							{% set order_button_color = "btn-cancelled" %}
+						{% endif %}
+						<br />
+						{% if order.rating is not empty %}
+						<div class="star-rating">
+							{% for i in 1..order.rating %}
+								<img src="/themes/food_theme/images/star.png">
+							{% endfor %}
+						</div>
+						{% endif %}
+						<p class="restaurant-list-card-delivery-time">
+							<input type="button" class="btn {{ order_button_color }}" value="{{ order_status }}"/>
+						</p>
+						<p class="order-review_link" style="text-align: right;">
+						{% if order.status == statusConfirmend %}
+							{{ order.review_link }}
+						{% endif %}
+						{% if order.status == statusConfirmend %}
+							{{ order.reorder_link }}
+						{% endif %}
+						</p>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+
+
+	{{ attach_library('food_theme2/orderlist') }}
+	{{ include('@food_theme2/order-confirmation-popup.html.twig', {title: 'Order Previous Cart', message: 'Want to repeat the last order.Click OK to repeat with the last order, or cancel to continue.'}) }}
+</div>

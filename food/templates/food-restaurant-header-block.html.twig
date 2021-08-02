@@ -1,0 +1,48 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set restaurant = element['#restaurant'] %}
+
+        {% if loop.index0 % 3 == 0 %}
+            <div class="restaurant-profile-details">
+				<div class="container">
+					<div class="col-sm-12">
+						<div class="col-sm-3">
+							<img src="{{ restaurant.image_url ? restaurant.image_url : '/themes/food_theme/images/restaurant-image.jpg' }}" alt="restaurant-image" class="pull-left" width="161px" height="121px">
+						</div>
+						<div class="col-sm-9">
+							<h2>{{ restaurant.name}} <small>{{ restaurant.tag_line }}</small></h2>
+							<ul class="restaurant-profile-details-left">
+								<li>
+									<h5>
+										Delivery {{ restaurant.order_types.delivery_settings.estimated_delivery_time_minutes }} min Pickup {{ restaurant.order_types.pickup_settings.estimated_pickup_time_minutes }} min
+									</h5>
+								</li>
+								<li>
+									<h5>{{ restaurant.derived_fields.formatted_address }}</h5>
+								</li>
+								<li>
+									<h5>{{ restaurant.phone_number }} </h5>
+								</li>
+							</ul>
+							<ul class="restaurant-profile-details-right">
+								<li>
+									<h4>
+										Distance 1 miles
+									</h4>
+								</li>
+								<li>
+									<h4>Min order {{ currencySymbol }}{{ restaurant.order_types.delivery_settings.minimum_order_amount }}</h4>
+								</li>
+								<li>
+									<h5>Delivery Fee {{ currencySymbol }}{{ restaurant.order_types.delivery_settings.delivery_charges_amount }} </h5>
+								</li>
+							</ul>
+							<div class="view_deal_link" style="float:right;">
+								<img data-toggle="tooltip" data-placement="top" title="" src="https://www.foodondeal.com/images/discountView.png" alt="deal" data-original-title="Click to view">
+								{{ restaurant.dealLink }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+        {% endif %}

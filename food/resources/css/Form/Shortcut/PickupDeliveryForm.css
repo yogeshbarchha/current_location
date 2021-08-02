@@ -1,0 +1,47 @@
+.notification-count.new-count,.notification-count.update-count,.notification-count.adjustment-count {
+	font-weight: bold;
+	background: #5cb439;
+	border-radius: 100px;
+	color: #fff;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	display: inline-block;
+	line-height: 20px;
+	position: relative;
+	top: -14px;
+}
+.navbar-inverse .navbar-nav > li > a.active{
+
+    color: #333 !important;
+    background: #e7e7e7 !important;
+
+}
+.ShortcutMenuContent{background: #e7e7e7;}
+
+
+.fod-navigation li a{cursor:pointer;}
+
+#restaurant-dropdown-filter.dropdown dd ul{height: 200px;}
+
+.mutliSelect li input{margin-right: 10px;}
+/*
+body:not(.path-frontpage) .content-container .region-content {
+    width: 90% !important;
+    min-height: 550px;
+} */
+
+
+.nav-tabs > li > a {
+    background: #5cb439;
+    color: #fff;
+}
+
+.nav-tabs > li > a:hover, .nav-tabs > li > a:focus{color:#5cb439; border:1px solid #5cb439 !important; background:#fff !important; border-bottom:none !important}
+
+.nav-tabs {
+    border-bottom: 1px solid #5cb439 !important;
+}
+
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{border:1px solid #5cb439 !important;border-bottom-color: transparent !important; }

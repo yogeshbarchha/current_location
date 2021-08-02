@@ -1,0 +1,62 @@
+<?php
+
+use Imbibe\Util\PhpHelper;
+
+function food_google_form_user_login_form_alter(&$form, $form_state) {
+	$form['actions']['google_sign_in'] = array(
+		'#type' => 'submit',
+		'#value' => t('Sign in with Google'),
+		'#attributes' => array(
+			'class' => array(
+				'food_google_signin_button',
+			)
+		),
+	);
+
+	$form['#attached']['library'][] = 'food_google/oauth2';
+}
+
+function food_google_form_food_user_signup_form_alter(&$form, $form_state) {
+	$form['google_sign_in'] = array(
+		'#type' => 'submit',
+		'#value' => t('Sign up with Google'),
+		'#attributes' => array(
+			'class' => array(
+				'food_google_signin_button',
+			)
+		),
+	);
+
+	$form['#attached']['library'][] = 'food_google/oauth2';
+}
+
+function food_google_form_food_platform_settings_form_alter(&$form, $form_state) {
+	$entity = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+	$form['google_settings'] = array(
+		'#type' => 'fieldset',
+		'#title' => t('Google settings'),
+	);
+	$form['google_settings']['google_page_url'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Page Url'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['google_settings', 'page_url']),
+	);
+	$form['google_settings']['google_client_id'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Client Id'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['google_settings', 'client_id']),
+	);
+	$form['google_settings']['google_client_secret'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Client secret'),
+		'#default_value' => PhpHelper::getNestedValue($entity, ['google_settings', 'client_secret']),
+	);
+	
+	$form['#platform_settings_callback'][] = function(&$entity, &$form, $form_state) {
+		$entity->google_settings = new \Drupal\food_google\Core\Platform\GoogleSettings();
+        $entity->google_settings->client_id = $form_state->getValue('google_client_id');
+        $entity->google_settings->client_secret = $form_state->getValue('google_client_secret');
+        $entity->google_settings->page_url = $form_state->getValue('google_page_url');
+	};
+}

@@ -1,0 +1,49 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set restaurant = element.additionalData.restaurant %}
+{% set username = element.additionalData.currentUser.account.name %}
+
+<div>
+	<div class="roulette-discount-screen">
+		<div class="col-md-9">
+			<div id="step-roulette">
+				<div id="step-roulette-prefix-message">
+					Dear {{username}}, get lucky. Play Roulette and get up to <span id='max_discount'>18</span>% discount.<br />
+				</div>
+				<div>
+					<canvas id="roulettecanvas" width="350" height="350"></canvas>
+				</div>
+			</div>
+			
+			<div id="step-deals" style="display: none">
+
+				<div class="display-roulette-discount">
+					<ul>
+						{% for deal in restaurant.deals %}
+							<li data-getdiscount="{{ deal.discount_pct }}">
+								<div>
+									<img src="https://www.foodondeal.com/images/discounts.png">
+									<div>{{ deal.discount_pct }}% discount on {{ currencySymbol }}{{ deal.min_order_amount }}</div>
+								</div>
+							</li>
+						{% endfor %}
+						<div class="clear"></div>
+					</ul>
+				</div>			
+				
+				<div id="step-deals-suffix-message">					
+				</div>
+			</div>
+
+			{{ element.additionalData.deliveryOptionsLink }}
+			{{ element.additionalData.restaurantMenuLink }}
+		</div>
+		
+		<div class="col-md-3 food-cart-column">
+			<div class="user-cart-container">
+				{{ element.user_cart_block_html }}
+			</div>
+		</div>
+	</div>
+</div>
+

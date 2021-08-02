@@ -1,0 +1,378 @@
+#Google libraries
+google.maps:
+  version: 1.x
+  js:
+    https://maps.googleapis.com/maps/api/js?key=googleApiKey&libraries=places,drawing,geometry: {type: external, minified: true}
+    resources/js/Google/MapWidgets.js: {}
+
+
+#Utility jquery libraries
+jquery.timepicker:
+  version: 1.3.5
+  css:
+    theme:
+      https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css: {type: external}
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js: {type: external}
+
+jquery.geocomplete:
+  version: 1.7.0
+  js:
+    /libraries/jquery.geocomplete/1.7.0/jquery.geocomplete.min.js: {minified: true}
+  dependencies:
+    - core/jquery
+
+jquery.autocomplete:
+  version: 1.4.2
+  js:
+    /libraries/jquery.autocomplete/1.4.2/jquery.autocomplete.min.js: {minified: true}
+  dependencies:
+    - core/jquery
+
+jquery.roulettewheel:
+  version: 1.0.0
+  js:
+    /libraries/roulettewheel/rouletteWheel.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.MapWidgets
+
+
+#Utility libraries
+common:
+  version: 1.x
+  js:
+    resources/js/Common.js: {}
+
+
+#Form libraries
+form.restaurant.restaurantsearchformblock:
+  version: 1.x
+  js:
+    resources/js/Plugin/Block/RestaurantSearchFormBlock.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/google.maps
+    - food/jquery.geocomplete
+    - food/jquery.autocomplete
+    - food/common
+
+form.restaurant.restaurantfilterformblock:
+  version: 1.x
+  js:
+    resources/js/Plugin/Block/RestaurantFilterFormBlock.js: {}
+  dependencies:
+    - core/drupal.ajax
+
+form.restaurant.restaurantheaderblock:
+  version: 1.x
+  js:
+    resources/js/Plugin/Block/RestaurantHeaderBlock.js: {}
+  dependencies:
+    - core/jquery
+
+form.restaurant.restaurantlist:
+  version: 1.x
+  js:
+    resources/js/Form/Restaurant/RestaurantList.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/common
+
+form.restaurant.restaurantmenu:
+  version: 1.x
+  css:
+    theme:
+      https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css: {type: external}
+      resources/css/Form/Restaurant/RestaurantMenu.css: {}
+      resources/css/Form/Restaurant/slider-pro.min.css: {}
+      resources/css/Form/Restaurant/style.css: {}
+  js:
+    resources/js/Form/Restaurant/RestaurantMenu.js: {}
+    resources/js/Form/Restaurant/jquery.sliderPro.min.js: {}
+  dependencies:
+    - core/jquery
+    - food/common
+
+form.user.cartblock:
+  version: 1.x
+  js:
+    resources/js/Plugin/Block/UserCartBlock.js: {}
+  dependencies:
+    - core/drupal.ajax
+
+form.user.addcartitemform:
+  version: 1.x
+  js:
+    resources/js/Form/Cart/AddCartItemForm.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - core/jquery.form
+
+form.cart.roulette:
+  version: 1.x
+  js:
+    resources/js/Form/Cart/Roulette.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/jquery.roulettewheel
+
+form.cart.deliveryoptions:
+  version: 1.x
+  js:
+    resources/js/Form/Cart/formValidation.min.js: {}
+    resources/js/Form/Cart/bootstrap.min.js: {}
+    resources/js/Form/Cart/DeliveryOptions.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/google.maps
+    - food/common
+    - food/jquery.geocomplete
+
+form.menu.manupagemap:
+  version: 1.x
+  js:
+    resources/js/Form/Cart/formValidation.min.js: {}
+    resources/js/Form/Cart/bootstrap.min.js: {}
+    resources/js/Form/Cart/DeliveryOptions.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/google.maps
+    - food/common
+    - food/jquery.geocomplete
+
+form.cart.placeorder:
+  version: 1.x
+  js:
+    resources/js/Form/Cart/PlaceOrder.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/common
+
+form.partner.restaurantform:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Partner/RestaurantForm.css: {}
+  js:
+    resources/js/Form/Partner/RestaurantForm.js: {}
+  dependencies:
+    - food/google.maps
+    - food/jquery.timepicker
+    - core/jquery
+    - core/drupalSettings
+    - food/common
+    - food/jquery.geocomplete
+
+form.partner.menuitemform:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/MenuItemForm.js: {}
+
+form.partner.report.dashboard:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/Dashboard.js: {}
+  dependencies:
+    - food/common
+
+form.partner.report.dashboardfilter:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/DashboardFilter.js: {}
+  dependencies:
+    - food/common
+
+form.partner.report.liveorders:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Partner/LiveOrders.css: {}
+  js:
+    resources/js/Form/Partner/LiveOrders.js: {}
+  dependencies:
+    - food/common
+
+form.partner.report.statement:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/Statement.js: {}
+  dependencies:
+    - food/common
+
+form.partner.report.financial:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/Financial.js: {}
+  dependencies:
+    - food/common
+    
+form.partner.chargeback:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/ChargeBack.js: {}
+  dependencies:
+    - food/common
+
+form.partner.adjustment:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/Adjustment.js: {}
+  dependencies:
+    - food/common
+    
+form.platform.settingform:
+  version: 1.x
+  js:
+    resources/js/Form/Platform/SettingForm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    - food/common
+
+form.platform.service.area:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Platform/ServiceAreaForm.css: {}
+  js:
+    resources/js/Form/Platform/ServiceAreaForm.js: {}
+  dependencies:
+    - food/google.maps
+    - core/jquery
+    - core/drupalSettings
+    - food/common
+    - food/jquery.geocomplete
+
+form.platform.userlist:
+  version: 1.x
+  js:
+    resources/js/Form/Platform/UserList.js: {}
+  dependencies:
+    - food/common
+
+dashboard.restaurantdropdownfilterblock:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Plugin/Block/RestaurantDropdownFilter.css: {}
+  js:
+    resources/js/Plugin/Block/RestaurantDropdownFilter.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/common
+
+# form.partner.addcancelcommentform:
+#   version: 1.x
+#   js:
+#     resources/js/Form/Comment/partnerAddComment.js: {}
+#   dependencies:
+#     - core/drupal.ajax
+#     - core/jquery.form
+
+form.partner.report.schedule:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/Schedule.js: {}
+  dependencies:
+    - food/common
+
+form.partner.report.currentbalance:
+  version: 1.x
+  js:
+    resources/js/Form/Partner/CurrentBalance.js: {}
+  dependencies:
+    - food/common
+
+food.shortcutmenublock:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Plugin/Block/shortcutmenublock.css: {}
+  js:
+    resources/js/Plugin/Block/shortcutmenublock.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - food/common
+
+form.shortcut.opencloseform:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Shortcut/OpenCloseForm.css: {}
+  js:
+    resources/js/Form/Shortcut/OpenCloseForm.js: {}
+  dependencies:
+    - food/jquery.timepicker
+    - core/jquery
+    - core/drupalSettings
+    - core/drupal.ajax
+    - food/common
+
+form.shortcut.pickupdeliveryform:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Shortcut/PickupDeliveryForm.css: {}
+  js:
+    resources/js/Form/Shortcut/PickupDeliveryForm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    - core/drupal.ajax
+    - food/common
+
+form.user.address:
+  version: 1.x
+  js:
+    resources/js/Form/User/AddressForm.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - core/jquery.form
+    - food/google.maps
+    - food/common
+    - food/jquery.geocomplete
+
+form.review:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Review/ReviewForm.css: {}
+  js:
+    resources/js/Form/Review/Rating.js: {}
+    resources/js/Form/Review/ReviewForm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - core/jquery.form
+    - food/common
+
+form.review.manage:
+  version: 1.x
+  css:
+    theme:
+      resources/css/Form/Review/ManageReview.css: {}
+  js:
+    resources/js/Form/Review/Rating.js: {}
+    resources/js/Form/Review/ManageReview.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - core/jquery.form
+    - food/common
+
+form.user.orderlist:
+  version: 1.x
+  js:
+    resources/js/Form/Order/OrderList.js: {}
+  dependencies:
+    - core/jquery
+    - food/common
+
+food.script:
+  version: 1.x
+  js:
+    resources/js/food.js: {}
+  dependencies:
+      - core/jquery
+

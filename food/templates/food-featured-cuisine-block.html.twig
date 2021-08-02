@@ -1,0 +1,45 @@
+<div class="dish-item-slider">
+	<div class="container">
+		<div class="row">
+			<div class="row">
+				<div class="col-md-12">
+					<!-- Controls -->
+					<div class="controls pull-right">
+						<a class="left fa fa-chevron-left btn btn" href="#carousel-example" data-slide="prev"></a><a class="right fa fa-chevron-right btn" href="#carousel-example" data-slide="next"></a>
+					</div>
+				</div>
+			</div>
+			<div id="carousel-example" class="carousel slide" data-ride="carousel">
+				<!-- Wrapper for slides -->
+				<div class="carousel-inner">
+
+					{% set divClosed = true %}
+					{% for cuisine in element.cuisines %}
+						{% if loop.index0 % 4 == 0 %}
+							<div class="item {{ loop.index0 == 0? 'active' : '' }}"><div class="row">
+							{% set divClosed = false %}
+						{% endif %}
+								<div class="col-sm-3">
+									<div class="col-item">
+									   <div class="photo">
+											<a href="{{ cuisine.search_url }}">
+												<img src="{{ cuisine.image_url }}"><h2>{{ cuisine.name }}</h2>
+											</a>
+										</div>									
+									</div>
+								</div>
+						{% if ((loop.index0 + 1) % 4 == 0) %}
+							</div></div>
+							{% set divClosed = true %}
+						{% endif %}
+					{% endfor %}
+					{% if divClosed == false %}
+						</div></div>
+						{% set divClosed = true %}
+					{% endif %}
+
+					</div>
+			</div>
+		</div>
+	</div>
+</div>

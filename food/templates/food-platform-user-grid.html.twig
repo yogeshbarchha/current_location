@@ -1,0 +1,26 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set header = element['#header'] %}
+{% set rows = element['#rows'] %}
+
+<div class="table-responsive">
+    <table class="food-entity-list-table table table-hover table-striped" data-striping="1">
+        <thead>
+            <tr>
+				{% for cell in header %}
+					<th>{{ cell.data }}</th>
+				{% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+			{% for row in rows %}
+				<tr>
+					{% for cell in header %}
+						<td>{{ row.data[cell.field] }}</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+</div>

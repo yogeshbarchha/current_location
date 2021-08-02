@@ -1,0 +1,42 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+
+<div class="col-sm-12">
+	
+	{% for restaurant in element.restaurants %}
+		<div class="restaurant-list-cards" data-url="{{ restaurant.restaurant_url}}">
+			{{ restaurant.dealLink }}
+			<div class="clearfix">
+				<img src="{{ restaurant.image_url ? restaurant.image_url : '/themes/food_theme/images/restaurant-image.jpg' }}" onerror="this.src='/themes/food_theme/images/restaurant-image.jpg'" alt="restaurant-image" class="pull-left" width="161px" height="121px">
+				
+				<div class="col-md-9">
+					<h2 class="restaurant-list-card-heading">{{ restaurant.name }} <small>{{ restaurant.tag_line }}</small></h2>
+					<div class="col-md-5">
+						<p class="restaurant-list-card-distance">Distance : {{ restaurant.distance }} {{ platform_settings.use_miles ? 'miles' : 'kms' }}</p>
+						<p class="restaurant-list-card-min-order">Min order for delivery : {{currencySymbol}}{{ restaurant.order_types.delivery_settings.minimum_order_amount }}</p>
+						<!--<p class="restaurant-list-card-cuisine">Cuisine : American-->
+						{% if restaurant.derived_fields.isOpen == true %}
+							<span class="restaurant-open" >(Open)</span>
+						{% else %} 
+							<span class="restaurant-close">(Close)</span>
+						{% endif %}
+                       </p>
+					</div>
+					<div class="col-md-7">
+						<div class="star-rating">
+							<img src="/themes/food_theme/images/star.png">
+							<img src="/themes/food_theme/images/star.png">
+							<img src="/themes/food_theme/images/star.png">
+							<img src="/themes/food_theme/images/star.png">
+							<img src="/themes/food_theme/images/star.png">
+							<h2>(201)</h2>
+						</div>
+					  <p class="restaurant-list-card-delivery-time">Delivery upto {{ restaurant.order_types.delivery_settings.estimated_delivery_time_minutes }} Min., Pickup upto {{ restaurant.order_types.pickup_settings.estimated_pickup_time_minutes }} Min.</p>
+					  <p class="restaurant-list-card-speciality">Speciality : {{ restaurant.speciality }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	
+</div>

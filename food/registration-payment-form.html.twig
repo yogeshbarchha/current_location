@@ -1,0 +1,101 @@
+<section class="space-cont ragistation">
+   <div class="container">
+      <div class="contact_width">
+         <div class="main-heading">
+            <h1>Tell us about yourself</h1>
+         </div>
+         <form{{ attributes }}>
+            <div class="row">
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.first_name }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.middle_name }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.last_name }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper" class="costom-select">
+                     {{ form.address_type }}
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.address }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.zipcode }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.city }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper" class="costom-select">
+                     {{ form.country }}
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.phone }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.email }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.organisation }}
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div id="wrapper">
+                     {{ form.department }}
+                  </div>
+               </div>
+            </div>
+            <div class="details">
+               <div class="row">
+                  <div class="col-sm-3 seprater">
+                     <p>{{ 'Field of interest'|t }}</p>
+                     <div id="wrapper" class="costom-select">
+                        {{ form.interest }}
+                     </div>
+                  </div>
+                  <div class="col-sm-4 seprater">
+                     <div class="option-btn">    
+                        {{ form.newsletter }}
+                     </div>
+                  </div>
+                  <div class="col-sm-5 seprater">
+                     {{ form.condition }}
+                  </div>
+               </div>
+            </div>
+            <div class="submit-form-box">
+               {{ form.submit }}
+            </div>
+            {{ form.form_build_id }}
+            {{ form.form_token }}
+            {{ form.form_id }}
+         </form>
+      </div>
+   </div>
+</section>

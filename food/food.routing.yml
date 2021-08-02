@@ -1,0 +1,1066 @@
+# Api
+food.api.execute:
+  path: '/food/api/execute'
+  defaults:
+    _controller: '\Drupal\food\Api\ApiController::execute'
+    _title: 'FoodOnDeal API'
+  requirements:
+    _permission: 'access content'
+  methods: [POST]
+
+
+# Anonymous routes
+food.signup:
+  path: '/food/signup'
+  defaults:
+    _title: 'Account Signup'
+    _form: '\Drupal\food\Form\User\SignUpForm'
+  requirements:
+    _role: 'anonymous'
+
+food.res_signup:    
+  path: '/restaurant/join'    
+  defaults:   
+    _title: 'Restaurent Signup'   
+    _form: '\Drupal\food\Form\User\SignUpRestaurentForm'    
+  requirements:
+    _role: 'anonymous'
+
+food.search.restaurants.page:
+  path: '/restaurant/search'
+  defaults:
+    _title: 'Search restaurants'
+    _controller: '\Drupal\food\Form\Restaurant\RestaurantList::page'
+  requirements:
+    _permission: 'access content'
+
+food.search.restaurants.perform:
+  path: '/restaurant/performsearch'
+  defaults:
+    _title: 'Perform restaurant search'
+    _controller: '\Drupal\food\Form\Restaurant\RestaurantList::search'
+  requirements:
+    _permission: 'access content'
+
+entity.food_restaurant.canonical:
+  path: '/restaurant/{food_restaurant}/menu' 
+  defaults:
+    _title: 'Restaurant Menu'
+    _entity_view: 'food_restaurant'
+  requirements:
+    _permission: 'access content'
+    food_restaurant: \d+
+  options:
+    no_cache: TRUE
+    
+entity.food_dish.canonical:
+  path: '/dish/{food_dish}' 
+  defaults:
+    _title: 'Dishes'
+    _entity_view: 'food_dish'
+  requirements:
+    _permission: 'access content'
+    food_service_area: \d+
+  options:
+    no_cache: TRUE
+    
+entity.food_service_area.canonical:
+  path: '/service_area/{food_service_area}' 
+  defaults:
+    _title: 'Service Area'
+    _entity_view: 'food_service_area'
+  requirements:
+    _permission: 'access content'
+    food_service_area: \d+
+  options:
+    no_cache: TRUE
+    
+food.restaurant.deals:
+  path: '/restaurant/deals/{restaurant_id}' 
+  defaults:
+    _title: 'Restaurant Deals'
+    _controller: '\Drupal\food\Form\Restaurant\RestaurantDeals::show'
+  requirements:
+    _permission: 'access content'
+    restaurant_id: \d+
+    
+food.cart.registerdirectrestaurantsearch:
+  path: '/restaurant/registerdirectrestaurantsearch'
+  defaults:
+    _title: 'Register direct restaurant search'
+    _controller: '\Drupal\food\Form\Cart\CartController::registerDirectRestaurantSearch'
+  requirements:
+    _permission: 'access content'
+
+food.cart.switchrestaurant:
+  path: '/cart/restaurant/switch/{restaurant_id}' 
+  defaults:
+    _title: 'Switch Cart Restaurant'
+    _controller: '\Drupal\food\Form\Cart\CartController::switchCartRestaurant'
+  requirements:
+    _permission: 'access content'
+    restaurant_id: \d+
+
+food.cart.item.add:
+  path: '/cart/item/add/{restaurant_menu_item_id}' 
+  defaults:
+    _title: 'Add Menu Item'
+    _form: '\Drupal\food\Form\Cart\AddCartItemForm'
+  requirements:
+    _permission: 'access content'
+    restaurant_menu_item_id: \d+
+
+food.cart.item.delete:
+  path: '/cart/item/delete/{restaurant_menu_item_id}/{index}'
+  defaults:
+    _title: 'Delete Cart Item '
+    _controller: '\Drupal\food\Form\Cart\CartController::deleteCartItem'
+  requirements:
+    _permission: 'access content'
+    restaurant_menu_item_id: \d+
+    index: \d+
+    
+food.cart.item.changequantity:
+  path: '/cart/item/changequantity/{restaurant_menu_item_id}/{index}/{quantity}'
+  defaults:
+    _title: 'Change Item Quantity '
+    _controller: '\Drupal\food\Form\Cart\CartController::changeItemQuantity'
+  requirements:
+    _permission: 'access content'
+    restaurant_menu_item_id: \d+
+    index: \d+
+    quantity: '[-]?\d+'
+
+food.cart.setdeliverymode:
+  path: '/cart/setorderdeliverymode/{delivery_mode}'
+  defaults:
+    _title: 'Set Order Delivery Mode'
+    _controller: '\Drupal\food\Form\Cart\CartController::setOrderDeliveryMode'
+  requirements:
+    _permission: 'access content'
+    delivery_mode: \d+
+
+
+#User cart routes
+food.cart.settippct:
+  path: '/cart/settippct/{tip_pct}'
+  defaults:
+    _title: 'Set Tip Pct'
+    _controller: '\Drupal\food\Form\Cart\CartController::setTipPct'
+  requirements:
+    _role: 'authenticated'
+    tip_pct: \d+
+    
+food.cart.roulette:
+  path: '/cart/roulette'
+  defaults:
+    _title: 'Food Game'
+    _controller: '\Drupal\food\Form\Cart\CartController::roulette'
+  requirements:
+    _role: 'authenticated'
+    
+food.cart.item.setplatformdiscount:
+  path: '/cart/setplatformdiscount/{discount}'
+  defaults:
+    _title: 'Set Platform Discount'
+    _controller: '\Drupal\food\Form\Cart\CartController::setPlatformDiscount'
+  requirements:
+    _permission: 'access content'
+    discount: \d+
+    
+food.cart.deliveryoptions:
+  path: '/cart/deliveryoptions'
+  defaults:
+    _title: 'Delivery Options'
+    _controller: '\Drupal\food\Form\Cart\CartController::deliveryOptions'
+  requirements:
+    _role: 'authenticated'
+    
+food.cart.placeorder:
+  path: '/cart/placeorder'
+  defaults:
+    _title: 'Place Order'
+    _controller: '\Drupal\food\Form\Cart\CartController::placeOrder'
+  requirements:
+    _role: 'authenticated'
+    
+food.cart.order.confirmation:
+  path: '/order/confirmation/{order_id}'
+  defaults:
+    _title: 'Order Confirmation'
+    _controller: '\Drupal\food\Form\User\OrderConfirmation::show'
+  requirements:
+    _role: 'authenticated'
+    order_id: \d+
+
+food.cart.order.confirm:
+  path: '/food/order/{restaurant_id}/confirm/{order_id}'
+  defaults:
+    _title: 'Confirm Order'
+    _controller: '\Drupal\food\Form\User\OrderController::confirmOrder'
+  requirements:
+    _role: 'authenticated'
+    restaurant_id: \d+ 
+    order_id: \d+
+
+food.cart.order.cancel:
+  path: '/food/order/{restaurant_id}/cancel/{order_id}'
+  defaults:
+    _title: 'Cancel Order'
+    _controller: '\Drupal\food\Form\User\OrderController::cancelOrder'
+  requirements:
+    _role: 'authenticated'
+    restaurant_id: \d+ 
+    order_id: \d+
+
+
+#Platform routes
+food.platform.settings:
+  path: '/food/platform/settings'
+  defaults:
+    _title: 'Platform Settings'
+    _form: '\Drupal\food\Form\Platform\SettingsForm'
+  requirements:
+    _role: 'administrator'
+
+food.restaurant_settings:
+  path: 'admin/structure/food_restaurant_settings'
+  defaults:
+    _form: '\Drupal\food\Form\Platform\RestaurantSettingsForm'
+    _title: 'Restaurant Settings'
+  requirements:
+    _permission: 'administer content types'
+    
+food.dish_settings:
+  path: 'admin/structure/dish_settings'
+  defaults:
+    _form: '\Drupal\food\Form\Platform\DishSettingsForm'
+    _title: 'Dish Settings'
+  requirements:
+    _permission: 'administer content types'
+    
+entity.food_dish.collection:
+  path: '/platform/dish/list'
+  defaults:
+    _title: 'Dishes'
+    _entity_list: 'food_dish'
+  requirements:
+    _role: 'platform'
+
+food.platform.dish.add:
+  path: '/platform/dish/add'
+  defaults:
+    _title: 'Add Dish'
+    _entity_form: food_dish.add
+  requirements:
+    _role: 'platform'
+
+entity.food_dish.edit_form:
+  path: '/platform/dish/edit/{food_dish}'
+  defaults:
+    _title: 'Edit Dish'
+    _entity_form: food_dish.edit
+  requirements:
+    _role: 'platform'
+    food_dish: \d+
+
+entity.food_dish.delete_form:
+  path: '/platform/dish/delete/{food_dish}'
+  defaults:
+    _entity_form: food_dish.delete
+    _title: 'Delete Dish'
+  requirements:
+    _role: 'platform'
+    food_dish: \d+
+
+food.service_area_settings:
+  path: 'admin/structure/service_area_settings'
+  defaults:
+    _form: '\Drupal\food\Form\Platform\ServiceAreaSettingsForm'
+    _title: 'Service Area Settings'
+  requirements:
+    _permission: 'administer content types'
+    
+entity.food_service_area.collection:
+  path: '/platform/service_area/list'
+  defaults:
+    _title: 'Service Areas'
+    _entity_list: 'food_service_area'
+  requirements:
+    _role: 'platform'
+
+food.platform.service_area.add:
+  path: '/platform/service_area/add'
+  defaults:
+    _title: 'Add Service Area'
+    _entity_form: food_service_area.add
+  requirements:
+    _role: 'platform'
+
+entity.food_service_area.edit_form:
+  path: '/platform/service_area/edit/{food_service_area}'
+  defaults:
+    _title: 'Edit Service Area'
+    _entity_form: food_service_area.edit
+  requirements:
+    _role: 'platform'
+    food_service_area: \d+
+
+entity.food_service_area.delete_form:
+  path: '/platform/service_area/delete/{food_service_area}'
+  defaults:
+    _entity_form: food_service_area.delete
+    _title: 'Delete Service Area'
+  requirements:
+    _role: 'platform'
+    food_service_area: \d+
+
+food.platform.menu.list:
+  path: '/platform/menu/list'
+  defaults:
+    _title: 'Menu List'
+    _controller: '\Drupal\food\Form\Platform\MenuList::show'
+  requirements:
+    _role: 'platform'
+
+food.platform.menu.add:
+  path: '/platform/menu/add'
+  defaults:
+    _title: 'Add Menu'
+    _form: '\Drupal\food\Form\Platform\MenuForm'
+  requirements:
+    _role: 'platform'
+
+food.platform.menu.edit:
+  path: '/platform/menu/edit/{menu_id}'
+  defaults:
+    _title: 'Edit Menu'
+    _form: '\Drupal\food\Form\Platform\MenuForm'
+  requirements:
+    _role: 'platform'
+    menu_id: \d+
+
+food.platform.cuisine.list:
+  path: '/platform/cuisine/list'
+  defaults:
+    _title: 'Cuisine List'
+    _controller: '\Drupal\food\Form\Platform\CuisineList::show'
+  requirements:
+    _role: 'platform'
+
+food.platform.cuisine.add:
+  path: '/platform/cuisine/add'
+  defaults:
+    _title: 'Add Cuisine'
+    _form: '\Drupal\food\Form\Platform\CuisineForm'
+  requirements:
+    _role: 'platform'
+
+food.platform.cuisine.edit:
+  path: '/platform/cuisine/edit/{cuisine_id}'
+  defaults:
+    _title: 'Edit Cuisine'
+    _form: '\Drupal\food\Form\Platform\CuisineForm'
+  requirements:
+    _role: 'platform'
+    menu_id: \d+
+
+food.platform.restaurant.owner.change:
+  path: '/platform/restaurant/owner/change/{restaurant_id}'
+  defaults:
+    _title: 'Restaurant Owner Change'
+    _form: '\Drupal\food\Form\Platform\RestaurantOwnerChangeForm'
+  requirements:
+    _role: 'platform'
+    restaurant_id: \d+
+  
+food.platform.user.list:
+  path: '/platform/user/list'
+  defaults:
+    _title: 'User List'
+    _controller: '\Drupal\food\Form\Platform\ReportController::userList'
+  requirements:
+    _role: 'platform'
+    
+    
+food.platform.user.listcallback:
+  path: '/platform/user/userlistcallback'
+  defaults:
+    _title: 'User List'
+    _controller: '\Drupal\food\Form\Platform\ReportController::userListCallback'
+  requirements:
+    _role: 'platform'
+    
+
+#User routes
+food.user.profile:
+  path: '/user/{user}/food_profile'
+  defaults:
+    _title: 'My Profile'
+    _form: '\Drupal\food\Form\User\ProfileForm'
+  requirements:
+    _role: 'authenticated'
+    user: \d+
+
+food.user.address.list:
+  path: '/user/{user}/addresses/list'
+  defaults:
+    _title: 'Addresses'
+    _controller: '\Drupal\food\Form\User\AddressList::show'
+  requirements:
+    _role: 'authenticated'
+    user: \d+
+
+food.user.address.add:
+  path: '/user/{user}/address/add'
+  defaults:
+    _title: 'Add Address'
+    _form: '\Drupal\food\Form\User\AddressForm'
+  requirements:
+    _role: 'authenticated'
+    user: \d+
+    
+food.user.address.edit:
+  path: '/user/{user}/address/edit/{address_id}'
+  defaults:
+    _title: 'Edit Address'
+    _form: '\Drupal\food\Form\User\AddressForm'
+  requirements:
+    _role: 'authenticated'
+    user: \d+
+    address_id: \d+
+
+food.user.order.list:
+  path: '/user/{user}/orders/list'
+  defaults:
+    _title: 'My Orders'
+    _controller: '\Drupal\food\Form\User\OrderList::show'
+  requirements:
+    _role: 'authenticated'
+    user: \d+ 
+   
+
+#Partner routes
+entity.food_restaurant.collection:
+  path: '/partner/restaurant/list'
+  defaults:
+    _title: 'My restaurants'
+    _entity_list: 'food_restaurant'
+  requirements:
+     _custom_access: 'Drupal\food\Access\User\UserController::restaurantListAccess'
+
+food.partner.restaurant.add:
+  path: '/partner/restaurant/add'
+  defaults:
+    _title: 'Add Restaurant'
+    _entity_form: food_restaurant.add
+  requirements:
+    _permission: 'food add restaurant'
+    
+food.partner.restaurant.copy:
+  path: '/partner/restaurant/{restaurant_id}/copy'
+  defaults:
+    _title: 'Copy Restaurant'
+    _form: '\Drupal\food\Form\Partner\RestaurantCopyForm'
+  requirements:
+    _permission: 'food copy restaurant'
+    restaurant_id: \d+
+
+entity.food_restaurant.edit_form:
+  path: '/partner/restaurant/edit/{food_restaurant}'
+  defaults:
+    _title: 'Edit Restaurant'
+    _entity_form: food_restaurant.edit
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantEditAccess'
+    food_restaurant: \d+
+
+food.partner.restaurant.menu.list:
+  path: '/partner/restaurant/{restaurant_id}/menu/list'
+  defaults:
+    _title: 'Menu List'
+    _controller: '\Drupal\food\Form\Partner\MenuList::show'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuListAccess'
+    restaurant_id: \d+
+    
+food.partner.restaurant.menu.add:
+  path: '/partner/restaurant/{restaurant_id}/menu/add'
+  defaults:
+    _title: 'Add list'
+    _form: '\Drupal\food\Form\Partner\MenuForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuAddAccess'
+    restaurant_id: \d+
+    
+food.partner.restaurant.menu.delete:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/delete'
+  defaults:
+    _title: 'Delete Restaurant Menu'
+    _controller: '\Drupal\food\Form\Partner\MenuList::delete'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuDeleteAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    
+food.partner.restaurant.menu.section.list:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/list'
+  defaults:
+    _title: 'Menu Section'
+    _controller: '\Drupal\food\Form\Partner\MenuSectionList::show'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    
+food.partner.restaurant.menu.section.delete:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/delete/{restaurant_menu_section_id}'
+  defaults:
+    _title: 'Delete Section'
+    _controller: '\Drupal\food\Form\Partner\MenuSectionList::delete'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    restaurant_menu_section_id: \d+
+    
+food.partner.restaurant.menu.section.add:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/add'
+  defaults:
+    _title: 'Add Menu Section'
+    _form: '\Drupal\food\Form\Partner\MenuSectionForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+ 
+    
+food.partner.restaurant.menu.section.edit:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/edit/{restaurant_menu_section_id}'
+  defaults:
+    _title: 'Edit Menu Section'
+    _form: '\Drupal\food\Form\Partner\MenuSectionForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+ 
+    restaurant_menu_section_id: \d+
+    
+food.partner.restaurant.menu.section.item.list:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/{restaurant_menu_section_id}/item/list'
+  defaults:
+    _title: 'Menu Section Item List'
+    _controller: '\Drupal\food\Form\Partner\MenuItemList::show'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    restaurant_menu_section_id: \d+
+    
+food.partner.restaurant.menu.section.item.add:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/{restaurant_menu_section_id}/item/add'
+  defaults:
+    _title: 'Add item'
+    _form: '\Drupal\food\Form\Partner\MenuItemForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    restaurant_menu_section_id: \d+
+    
+food.partner.restaurant.menu.section.item.edit:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/{restaurant_menu_section_id}/item/edit/{restaurant_menu_item_id}'
+  defaults:
+    _title: 'Edit Item'
+    _form: '\Drupal\food\Form\Partner\MenuItemForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    restaurant_menu_section_id: \d+
+    restaurant_menu_item_id: \d+
+
+food.partner.restaurant.menu.section.item.delete:
+  path: '/partner/restaurant/{restaurant_id}/menu/{menu_id}/{restaurant_menu_id}/section/{restaurant_menu_section_id}/item/delete/{restaurant_menu_item_id}'
+  defaults:
+    _title: 'Delete Item'
+    _controller: '\Drupal\food\Form\Partner\MenuItemList::delete'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuSectionOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+
+    restaurant_menu_id: \d+
+    restaurant_menu_section_id: \d+
+    restaurant_menu_item_id: \d+
+
+food.partner.restaurant.cuisine.list:
+  path: '/partner/restaurant/{restaurant_id}/cuisine/list'
+  defaults:
+    _title: 'Cuisine List'
+    _controller: '\Drupal\food\Form\Partner\CuisineList::show'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantCuisineOperationAccess'
+    restaurant_id: \d+
+    
+food.partner.restaurant.cuisine.add:
+  path: '/partner/restaurant/{restaurant_id}/cuisine/add'
+  defaults:
+    _title: 'Add list'
+    _form: '\Drupal\food\Form\Partner\CuisineForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantCuisineOperationAccess'
+    restaurant_id: \d+  
+
+food.partner.restaurant.cuisine.delete:
+  path: '/partner/restaurant/{restaurant_id}/cuisine/{cuisine_id}/{restaurant_cuisine_id}/delete'
+  defaults:
+    _title: 'Delete Restaurant Cuisine'
+    _controller: '\Drupal\food\Form\Partner\CuisineList::delete'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantCuisineOperationAccess'
+    restaurant_id: \d+
+    menu_id: \d+      
+
+food.partner.order.confirm:
+  path: '/food/partner/order/{restaurant_id}/confirm/{order_id}'
+  defaults:
+    _title: 'Confirm Order'
+    _controller: '\Drupal\food\Form\Partner\OrderController::confirmOrder'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderOperationAccess'
+    restaurant_id: \d+ 
+    order_id: \d+
+
+food.partner.order.cancel:
+  path: '/food/partner/order/{restaurant_id}/cancel/{order_id}'
+  defaults:
+    _title: 'Cancel Order'
+    _controller: '\Drupal\food\Form\Partner\OrderController::cancelOrder'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderOperationAccess'
+    restaurant_id: \d+ 
+    order_id: \d+
+
+food.partner.report.dashboard:
+  path: '/partner/report/dashboard'
+  defaults:
+    _title: 'Live Orders'
+    _controller: '\Drupal\food\Form\Partner\ReportController::dashboard'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.dashboard.completeorder:
+  path: '/partner/report/dashboard/complete'
+  defaults:
+    _title: 'Completed Orders'
+    _controller: '\Drupal\food\Form\Partner\ReportController::dashboardCompleted'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.dashboard.cancelorder:
+  path: '/partner/report/dashboard/cancel'
+  defaults:
+    _title: 'Cancelled Orders'
+    _controller: '\Drupal\food\Form\Partner\ReportController::dashboardCancelled'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.dashboard.scheduleorder:
+  path: '/partner/report/dashboard/schedule'
+  defaults:
+    _title: 'Scheduled Orders'
+    _controller: '\Drupal\food\Form\Partner\ReportController::dashboardScheduled'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.dashboardrefresh:
+  path: '/partner/report/dashboardrefresh'
+  defaults:
+    _title: 'Partner Dashboard'
+    _controller: '\Drupal\food\Form\Partner\ReportController::refreshDashboard'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.schedulerefresh:
+  path: '/partner/report/schedulerefresh'
+  defaults:
+    _title: 'Schedule Dashboard'
+    _controller: '\Drupal\food\Form\Partner\ReportController::refreshScheduled'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.completeorderrefresh:
+  path: '/partner/report/completeorderrefresh'
+  defaults:
+    _title: 'Partner Dashboard'
+    _controller: '\Drupal\food\Form\Partner\ReportController::refreshdashboardCompleted'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+
+food.partner.report.cancelorderrefresh:
+  path: '/partner/report/cancelorderrefresh'
+  defaults:
+    _title: 'Partner Dashboard'
+    _controller: '\Drupal\food\Form\Partner\ReportController::refreshdashboardCancelled'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+    
+food.partner.report.liveorders:
+  path: '/partner/report/order_history'
+  defaults:
+    _title: 'Orders History'
+    _controller: '\Drupal\food\Form\Partner\ReportController::liveOrders'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+    
+food.partner.report.liveorderscallback:
+  path: '/partner/report/liveorderscallback'
+  defaults:
+    _title: 'Live Orders'
+    _controller: '\Drupal\food\Form\Partner\ReportController::liveOrdersCallback'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportDashboardAccess'
+    
+food.partner.report.statement:
+  path: '/partner/report/statement'
+  defaults:
+    _title: 'Statement'
+    _controller: '\Drupal\food\Form\Partner\ReportController::statement'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+    
+food.partner.report.statementcallback:
+  path: '/partner/report/statementcallback'
+  defaults:
+    _title: 'Statement'
+    _controller: '\Drupal\food\Form\Partner\ReportController::statementCallback'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+
+food.partner.report.financialstatement:
+  path: '/partner/report/financialstatement'
+  defaults:
+    _title: 'Financial Statement'
+    _controller: '\Drupal\food\Form\Partner\ReportController::financialstatement'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+
+food.partner.report.financialstatementCallback:
+  path: '/partner/report/financialstatementCallback'
+  defaults:
+    _title: 'Financial Statement'
+    _controller: '\Drupal\food\Form\Partner\ReportController::financialstatementCallback'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+
+food.partner.report.currentbalance:
+  path: '/current-balance'
+  defaults:
+    _title: 'Current Balance'
+    _controller: '\Drupal\food\Form\Partner\ReportController::currentBalance'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+
+food.partner.report.currentbalancecallback:
+  path: '/currentbalancecallback'
+  defaults:
+    _title: 'Current Balance'
+    _controller: '\Drupal\food\Form\Partner\ReportController::currentBalanceCallback'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+
+food.partner.account.deposit:
+  path: '/partner/restaurant/account/deposit/{restaurant_id}'
+  defaults:
+    _title: 'Restaurant Deposit Change'
+    _form: '\Drupal\food\Form\Partner\AccountDepositForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantReportStatmentAccess'
+    restaurant_id: \d+
+    
+food.partner.order.detail:
+  path: '/partner/order/detail/{order_id}'
+  defaults:
+    _title: 'Partner Dashboard'
+    _controller: '\Drupal\food\Form\Partner\ReportController::orderDetail'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderDetailAccess'
+    order_id: \d+  
+    
+food.partner.chargeback:
+  path: '/partner/report/chargeback'
+  defaults:
+    _title: 'Charge Back'
+    _controller: '\Drupal\food\Form\Partner\ReportController::chargeBack'
+  requirements:
+    _role: 'partner'
+    
+food.partner.chargebackcallback:
+  path: '/partner/report/chargebackcallback'
+  defaults:
+    _title: 'Charge Back'
+    _controller: '\Drupal\food\Form\Partner\ReportController::chargeBackCallback'
+  requirements:
+    _role: 'partner'
+
+food.partner.chargeback.add:
+  path: '/partner/{restaurant_id}/{user_id}/order/chargeback/add/{order_id}'
+  defaults:
+    _title: 'Add Charge Back'
+    _form: '\Drupal\food\Form\Partner\ChargeBackForm'
+  requirements:
+    _role: 'partner'
+    restaurant_id: \d+ 
+    order_id: \d+
+    user_id: \d+
+    
+food.partner.adjustment:
+  path: '/partner/report/adjustment'
+  defaults:
+    _title: 'Adjustment'
+    _controller: '\Drupal\food\Form\Partner\ReportController::adjustment'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderAdjustmentAccess'
+    
+food.partner.adjustmentcallback:
+  path: '/partner/report/adjustmentcallback'
+  defaults:
+    _title: 'Adjustment'
+    _controller: '\Drupal\food\Form\Partner\ReportController::adjustmentCallback'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderAdjustmentAccess'
+
+food.partner.adjustment.add:
+  path: '/partner/{restaurant_id}/{user_id}/order/adjustment/add/{order_id}'
+  defaults:
+    _title: 'Add Adjustment'
+    _form: '\Drupal\food\Form\Partner\AdjustmentForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantAddOrderAdjustmentAccess'
+    restaurant_id: \d+ 
+    order_id: \d+
+    user_id: \d+   
+
+food.partner.order.cancel.comment.add:
+  path: '/partner/order/{restaurant_id}/cancel/comment/add/{order_id}' 
+  defaults:
+    _title: 'Order Cancel Comment'
+    _form: '\Drupal\food\Form\Comment\AddCancelCommentForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantOrderOperationAccess'
+    order_id: \d+
+    restaurant_id: \d+
+
+food.user_reference.info:
+  path: '/user_reference/info' 
+  defaults:
+    _title: 'Get User Reference Info'
+    _controller: '\Drupal\food\Core\UserReferenceController::userInfo'
+  requirements:
+    _role: 'administrator'
+
+#restaurant shortcuts
+food.restaurant.delete:
+  path: '/restaurant/{restaurant_id}/delete'
+  defaults:
+    _title: 'Restaurant Delete'
+    _form: '\Drupal\food\Form\Partner\RestaurantDeleteForm'
+  requirements:
+    _role: 'administrator + partner'
+    restaurant_id: \d+
+
+#notification shortcuts
+food.notifications.newshortcutnotificationrefresh:
+  path: '/partner/report/newshortcutnotificationrefresh'
+  defaults:
+    _title: 'Notifications'
+    _controller: '\Drupal\food\Form\Shortcut\RestaurantNotification::refreshNewNotification'
+  requirements:
+    _role: 'administrator'
+
+food.notifications.updatedshortcutnotificationrefresh:
+  path: '/partner/report/updatedshortcutnotificationrefresh'
+  defaults:
+    _title: 'Notifications'
+    _controller: '\Drupal\food\Form\Shortcut\RestaurantNotification::refreshUpdatedNotification1'
+  requirements:
+    _role: 'administrator'
+    
+food.notifications.adjustmentupdatednotificationrefresh:
+  path: '/adjustmentupdatednotificationrefresh'
+  defaults:
+    _title: 'Notifications'
+    _controller: '\Drupal\food\Form\Shortcut\RestaurantNotification::adjustmentUpdatedNotification'
+  requirements:
+    _role: 'partner'
+
+food.notifications.customercancelordernotificationrefresh:
+  path: '/customercancelordernotificationrefresh'
+  defaults:
+    _title: 'Notifications'
+    _controller: '\Drupal\food\Form\Shortcut\RestaurantNotification::customerCancelOrderNotification'
+  requirements:
+    _role: 'administrator + partner'
+
+food.notifications.vendorsubusercancelordernotificationrefresh:
+  path: '/vendorsubusercancelordernotificationrefresh'
+  defaults:
+    _title: 'Notifications'
+    _controller: '\Drupal\food\Form\Shortcut\RestaurantNotification::vendorSubuserCancelOrderNotification'
+  requirements:
+    _role: 'administrator + partner'
+    
+food.partner.restaurant.menu.new:
+  path: '/partner/restaurant/{restaurant_id}/menu/new'
+  defaults:
+    _title: 'Add Menu'
+    _form: '\Drupal\food\Form\Partner\NewMenuForm'
+  requirements:
+    _custom_access: 'Drupal\food\Access\User\UserController::restaurantMenuAddAccess'
+    restaurant_id: \d+
+
+#address Delete
+
+food.user.address.delete:
+  path: '/user/{user}/address/delete/{address_id}'
+  defaults:
+    _title: 'User Address Delete'
+    _form: '\Drupal\food\Form\User\AddressDeleteForm'
+  requirements:
+    _role: 'authenticated'
+    user: \d+
+    address_id: \d+
+
+#review links
+food.order.review.question.manage:
+  path: '/review/question/manage'
+  defaults:
+    _title: 'Review Question Manage'
+    _controller: '\Drupal\food\Form\Review\ReviewController::questionManage'
+  requirements:
+    _role: 'administrator'
+
+food.order.review.question.add:
+  path: '/review/question/add'
+  defaults:
+    _title: 'Add Question'
+    _form: '\Drupal\food\Form\Review\QuestionForm'
+  requirements:
+    _role: 'administrator'
+
+food.order.review.question.edit:
+  path: '/review/question/edit/{question_id}'
+  defaults:
+    _title: 'Edit Question'
+    _form: '\Drupal\food\Form\Review\QuestionForm'
+  requirements:
+    _role: 'administrator'
+    question_id: \d+
+
+food.order.review.question.delete:
+  path: '/review/question/delete/{question_id}'
+  defaults:
+    _title: 'Delete Question'
+    _form: '\Drupal\food\Form\Review\QuestionDeleteForm'
+  requirements:
+    _role: 'administrator'
+    question_id: \d+
+
+
+food.order.review.detail.delete:
+  path: '/review/detail/delete/{review_id}'
+  defaults:
+    _title: 'Delete Review'
+    _form: '\Drupal\food\Form\Review\ReviewDeleteForm'
+  requirements:
+    _role: 'administrator'
+    review_id: \d+   
+
+
+food.review.add.form:
+  path: '/order/review/add/{order_id}'
+  defaults:
+    _form: '\Drupal\food\Form\Review\ReviewForm'
+    _title: 'Review Form'
+  requirements:
+    _role: 'authenticated'
+    order_id: \d+
+
+food.rating.data:
+  path: '/rating/data'
+  defaults:
+    _controller: '\Drupal\food\Form\Rating\RatingController::getRating'
+    _title: 'Rating Data'
+  requirements:
+    _role: 'authenticated'
+
+food.order.review.manage:
+  path: '/review/manage'
+  defaults:
+    _title: 'Review Manage'
+    _controller: '\Drupal\food\Form\Review\ReviewController::reviewManage'
+  requirements:
+    _role: 'administrator'
+
+food.order.review.status:
+  path: '/review/{review_id}/status/update'
+  defaults:
+    _title: 'Review Status Update'
+    _form: '\Drupal\food\Form\Review\ReviewStatusForm'
+  requirements:
+    _role: 'administrator'
+    review_id: \d+
+
+food.cart.add.previous.order:
+  path: '/cart/add/previous/{order_id}'
+  defaults:
+    _form: '\Drupal\food\Form\User\PreviousOrderForm'
+    _title: 'Order Detail'
+  requirements:
+    _role: 'authenticated'
+    order_id: \d+
+
+food.user.order.cancel.comment.add:
+  path: '/user/order/{restaurant_id}/cancel/comment/add/{order_id}' 
+  defaults:
+    _title_callback: '\Drupal\food\Form\User\UserOrderCancelCommentForm::getTitle'
+    _form: '\Drupal\food\Form\User\UserOrderCancelCommentForm'
+  requirements:
+    _role: 'authenticated'
+    order_id: \d+
+    restaurant_id: \d+
+
+food.order.cart.redirect:
+  path: '/order/cart/redirect/{order_id}/{restaurant_menu_item_id}'
+  defaults:
+    _controller: '\Drupal\food\Form\User\PreviousOrderRedirect::index'
+    _title: 'Order Detail'
+  requirements:
+  #  _role: 'authenticated'
+    _permission: 'access content'
+    order_id: \d+
+    restaurant_menu_item_id: \d+
+
+food.previous.order.redirect:
+  path: '/previous/order/redirect/{order_id}'
+  defaults:
+    _controller: '\Drupal\food\Form\User\PreviousOrderRedirect::OrderRedirect'
+    _title: 'Order Detail'
+  requirements:
+    _role: 'authenticated'
+    order_id: \d+
+    restaurant_menu_item_id: \d+
+
+food.menu.item.autocomplete:
+  path: '/menu-item-autocomplete/{restaurant}/{count}'
+  defaults:
+    _controller: '\Drupal\food\Form\Shortcut\MenuItemAutocompleteController::handleAutocomplete'
+    _format: json
+  requirements:
+    _access: 'TRUE'

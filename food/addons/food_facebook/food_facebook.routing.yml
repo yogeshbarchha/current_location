@@ -1,0 +1,29 @@
+food_facebook.signin.oauth2:
+  path: '/food/facebook/signin/oauth2'
+  defaults:
+    _controller: '\Drupal\food_facebook\Form\FacebookController::oauth2'
+    _title: 'Facebook Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+food_facebook.signin.oauth2callback:
+  path: '/food/facebook/signin/oauth2callback'
+  defaults:
+    _controller: '\Drupal\food_facebook\Form\FacebookController::oauth2Callback'
+    _title: 'Facebook Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+food_facebook.signin.processoauthresponse:
+  path: '/food/facebook/signin/processoauthresponse'
+  defaults:
+    _controller: '\Drupal\food_facebook\Form\FacebookController::processOAuthResponse'
+    _title: 'Facebook Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE

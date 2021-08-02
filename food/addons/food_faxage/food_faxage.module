@@ -1,0 +1,97 @@
+<?php
+
+use Imbibe\Util\PhpHelper;
+
+function food_faxage_form_food_platform_settings_form_alter(&$form,
+  $form_state) {
+  $entity = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+  $form['faxage_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Faxage settings'),
+  );
+  $form['faxage_settings']['faxage_username'] = array(
+    '#type' => 'textfield',
+    '#title' => t('User name'),
+    '#default_value' => PhpHelper::getNestedValue($entity,
+      ['faxage_settings', 'username']),
+  );
+  $form['faxage_settings']['faxage_company'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Company'),
+    '#default_value' => PhpHelper::getNestedValue($entity,
+      ['faxage_settings', 'company']),
+  );
+  $form['faxage_settings']['faxage_password'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Password'),
+    '#default_value' => PhpHelper::getNestedValue($entity,
+      ['faxage_settings', 'password']),
+  );
+
+  $form['#platform_settings_callback'][] = function (&$entity,
+    &$form,
+    $form_state) {
+    $entity->faxage_settings = new \Drupal\food_faxage\Core\Platform\FaxageSettings();
+    $entity->faxage_settings->username = $form_state->getValue('faxage_username');
+    $entity->faxage_settings->company = $form_state->getValue('faxage_company');
+    $entity->faxage_settings->password = $form_state->getValue('faxage_password');
+  };
+}
+
+function food_faxage_food_order_postplace($order, $cart) {
+  $restaurant = \Drupal\food\Core\RestaurantController::getRestaurantById($order->restaurant_id);
+  if (!empty($restaurant->fax_number)) {
+    $fax_message = \Drupal\food\Core\OrderController::buildOrderNotificationBody($order,
+      TRUE);
+    food_faxage_send_fax($restaurant->fax_number, $fax_message);
+  }
+}
+
+/*add by manmohan 220518*/
+function food_faxage_food_order_cancel($order, $cart) {
+  $restaurant = \Drupal\food\Core\RestaurantController::getRestaurantById($order->restaurant_id);
+  if (!empty($restaurant->fax_number)) {
+      $fax_message = \Drupal\food\Core\OrderController::buildOrderCancellationBodyFax($order,
+      TRUE);
+    food_faxage_send_fax($restaurant->fax_number, $fax_message);
+  }
+}
+
+
+function food_faxage_send_fax($fax_number, $fax_message) {
+  $platform_settings = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+  $faxage_url = "https://www.faxage.com/httpsfax.php";
+  $faxage_username = $platform_settings->faxage_settings->username;
+  $faxage_company = $platform_settings->faxage_settings->company;
+  $faxage_password = $platform_settings->faxage_settings->password;
+
+  $faxage_recipname = $fax_number . '@rcfax.com';
+  $faxage_recipnumber = $fax_number;
+  $faxage_operation = "sendfax";
+
+  $data = array(
+    'username' => $faxage_username,
+    'password' => $faxage_password,
+    'company' => $faxage_company,
+    'recipname' => $faxage_recipname,
+    'faxno' => $faxage_recipnumber,
+    'operation' => $faxage_operation,
+    'faxfilenames[0]' => 'order.html',
+    'faxfiledata[0]' => base64_encode($fax_message),
+  );
+
+  try {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $faxage_url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curl, CURLOPT_POST, TRUE);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    $result = curl_exec($curl);
+    curl_close($curl);
+  } catch (Exception $e) {
+    watchdog_exception('food', $ex);
+  }
+}

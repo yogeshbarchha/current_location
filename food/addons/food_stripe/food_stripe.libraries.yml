@@ -1,0 +1,6 @@
+#Stripe libraries
+order.placement:
+  version: 1.x
+  js:
+    https://js.stripe.com/v3/: {type: external, minified: true}
+    resources/js/Form/Cart/PlaceOrder.js: {}

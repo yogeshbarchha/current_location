@@ -1,0 +1,724 @@
+<?php
+
+//use Drupal\Core\Cache\Cache;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Imbibe\Util\PhpHelper;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\RedirectCommand;
+/**
+ * Implements hook_hook_info().
+ */
+function food_hook_info() {
+  $hooks = array(
+    'food_order_preplace',
+    'food_order_postplace',
+    'food_order_confirm',
+    'food_order_cancel',
+    'food_dispatch_otp',
+  );
+
+  $hooks = array_combine($hooks, $hooks);
+  foreach ($hooks as $hook => $info) {
+    $hooks[$hook] = array('group' => 'food');
+  }
+
+  return $hooks;
+}
+
+function food_library_info_alter(&$libraries, $extension) {
+  if ($extension == 'food' && isset($libraries['google.maps'])) {
+    $platform_settings = \Drupal\food\Core\PlatformController::getPlatformSettings();
+
+    $new_js = array();
+    foreach ($libraries['google.maps']['js'] as $source => $options) {
+      $source = str_replace('googleApiKey', $platform_settings->google_api_key,
+        $source);
+      $new_js[$source] = $options;
+    }
+    $libraries['google.maps']['js'] = $new_js;
+  }
+}
+
+function food_page_attachments_alter(array &$attachments) {
+  foreach ($attachments['#attached']['html_head'] as $key => $attachment) {
+    if ($attachment[1] == 'system_meta_generator') {
+      unset($attachments['#attached']['html_head'][$key]);
+    }
+  }
+  $attachments['#attached']['library'][] = 'food/food.script';
+}
+
+/*function food_page_attachments_alter(&$page) {
+  $libraries = $page['#attached']['library'];
+  print_r($libraries);
+}*/
+
+function food_toolbar() {
+  $items = [];
+  $items['food'] = [
+    '#cache' => [
+      'contexts' => [
+        'user.roles',
+        'user.permissions',
+      ],
+    ],
+  ];
+
+  $roles = \Drupal::currentUser()->getRoles();
+  if (!in_array(\Drupal\food\Core\RoleController::Administrator_Role_Name, $roles)) {
+    return ($items);
+  }
+
+  $links = [];
+
+  $links['restaurant_manage'] = [
+    'title' => t('Manage Restaurants'),
+    'url' => Url::fromRoute('entity.food_restaurant.collection'),
+    'attributes' => [
+      'title' => t('Manage Restaurants'),
+    ],
+  ];
+
+  $links['review_question_manage'] = [
+    'title' => t('Review Question Manage'),
+    'url' => Url::fromRoute('food.order.review.question.manage'),
+    'attributes' => [
+      'title' => t('Review Question Manage'),
+    ],
+  ];
+
+  $links['review_manage'] = [
+    'title' => t('Review Manage'),
+    'url' => Url::fromRoute('food.order.review.manage'),
+    'attributes' => [
+      'title' => t('Review Manage'),
+    ],
+  ];
+
+  $links['partner_dashboard'] = [
+    'title' => t('Dashboard'),
+    'url' => Url::fromRoute('food.partner.report.dashboard'),
+    'attributes' => [
+      'title' => t('Dashboard'),
+    ],
+  ];
+
+  if (in_array(\Drupal\food\Core\RoleController::Platform_Role_Name, $roles)) {
+    $links['platform_settings'] = [
+      'title' => t('Platform Settings'),
+      'url' => Url::fromRoute('food.platform.settings'),
+      'attributes' => [
+        'title' => t('Platform Settings'),
+      ],
+    ];
+
+    $links['menu_manage'] = [
+      'title' => t('Manage Menu'),
+      'url' => Url::fromRoute('food.platform.menu.list'),
+      'attributes' => [
+        'title' => t('Manage Menu'),
+      ],
+    ];
+
+    $links['cuisine_manage'] = [
+      'title' => t('Manage Cuisine'),
+      'url' => Url::fromRoute('food.platform.cuisine.list'),
+      'attributes' => [
+        'title' => t('Manage Cuisine'),
+      ],
+    ];
+
+    $links['dish_manage'] = [
+      'title' => t('Manage Dishes'),
+      'url' => Url::fromRoute('entity.food_dish.collection'),
+      'attributes' => [
+        'title' => t('Manage Dishes'),
+      ],
+    ];
+
+    $links['service_area_manage'] = [
+      'title' => t('Manage Service Areas'),
+      'url' => Url::fromRoute('entity.food_service_area.collection'),
+      'attributes' => [
+        'title' => t('Manage Service Areas'),
+      ],
+    ];
+  }
+
+  $items['food'] += array(
+    '#type' => 'toolbar_item',
+    'tab' => array(
+      '#type' => 'link',
+      '#title' => t('Food'),
+      '#url' => Url::fromUri('internal:/'),
+      '#attributes' => array(
+        'title' => t('Food Dashboard'),
+        //'class' => array('toolbar-icon', 'toolbar-icon-help'),
+        'aria-pressed' => 'false',
+      ),
+    ),
+    'tray' => [
+      '#heading' => t('Food Dashboard actions'),
+      'user_links' => [
+        '#cache' => [
+          // Cacheable per "authenticated or not", because the links to
+          // display depend on that.
+          'contexts' => ['user.roles', 'user.permissions'],
+        ],
+        '#theme' => 'links__toolbar_food',
+        '#links' => $links,
+        '#attributes' => [
+          'class' => ['toolbar-menu'],
+        ],
+      ],
+    ],
+    '#weight' => 101,
+  );
+  return $items;
+}
+
+function food_toolbar_alter(&$items) {
+  $user = \Drupal::currentUser();
+
+  // Add logout & user account links or login link.
+  $links_cache_contexts = [];
+  if ($user->isAuthenticated()) {
+    $links = array(
+      'food_profile' => array(
+        'title' => t('My Profile'),
+        'url' => Url::fromRoute('food.user.profile', ['user' => $user->id()]),
+        'attributes' => array(
+          'title' => t('My Profile'),
+        ),
+      ),
+      'food_addresses' => array(
+        'title' => t('Addresses'),
+        'url' => Url::fromRoute('food.user.address.list',
+          ['user' => $user->id()]),
+        'attributes' => array(
+          'title' => t('Addresses'),
+        ),
+      ),
+      'food_orders' => array(
+        'title' => t('My orders'),
+        'url' => Url::fromRoute('food.user.order.list',
+          ['user' => $user->id()]),
+        'attributes' => array(
+          'title' => t('My Orders'),
+        ),
+      ),
+    );
+    // The "Edit user account" link is per-user.
+    $links_cache_contexts[] = 'user';
+  }
+  else {
+    $links = array();
+  }
+
+  $items['user']['tray']['user_links']['#links'] += $links;
+}
+
+/*function food_menu_links_discovered_alter(&$links) {
+  $user = \Drupal::currentUser();
+
+  //Doesn't work, the id is cached across all users.
+  $links['food.user.profile']['route_parameters'] = array('user' => $user->id());
+}
+*/
+
+function food_theme($existing, $type, $theme, $path) {
+  return [
+    'food_top_banner_block' => [
+      'render element' => 'element',
+      'base hook' => 'food_top_banner_block',
+    ],
+    'food_featured_cuisine_block' => [
+      'render element' => 'element',
+      'base hook' => 'food_featured_cuisine_block',
+    ],
+    'food_recent_order_items_block' => [
+      'render element' => 'element',
+      'base hook' => 'food_recent_order_items_block',
+    ],
+    'food_service_area_page' => [
+      'render element' => 'element',
+    ],
+    'food_dish_page' => [
+      'render element' => 'element',
+    ],
+    'food_restaurant_search_form' => [
+      'render element' => 'form',
+    ],
+    'food_restaurant_filter_form' => [
+      'render element' => 'form',
+    ],
+    'food_restaurant_search_page' => [
+      'render element' => 'element',
+      'base hook' => 'food_restaurant_search_page',
+    ],
+    'food_restaurant_search_list' => [
+      'render element' => 'element',
+      'base hook' => 'food_restaurant_search_list',
+    ],
+    'food_restaurant_deal_list' => [
+      'render element' => 'element',
+      'base hook' => 'food_restaurant_deal_list',
+    ],
+    'food_restaurant_header_block' => [
+      'render element' => 'element',
+      'base hook' => 'food_restaurant_header_block',
+    ],
+    'food_restaurant_menu_list' => [
+      'render element' => 'element',
+      'base hook' => 'food_restaurant_menu_list',
+    ],
+    'food_user_cart_form' => [
+      'render element' => 'form',
+    ],
+    'food_user_cart_roulette' => [
+      'render element' => 'element',
+      'base hook' => 'food_user_cart_roulette',
+    ],
+    'food_user_cart_delivery_options' => [
+      'render element' => 'element',
+      'base hook' => 'food_user_cart_delivery_options',
+    ],
+    'food_user_cart_place_order' => [
+      'render element' => 'element',
+      'base hook' => 'food_user_cart_place_order',
+    ],
+    'food_user_order_list' => [
+      'render element' => 'element',
+      'base hook' => 'food_user_order_list',
+    ],
+    'food_user_order_confirmation' => [
+      'render element' => 'element',
+      'base hook' => 'food_user_order_confirmation',
+    ],
+    'food_partner_order_grid' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_order_grid',
+    ],
+    'food_partner_order_detail' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_order_detail',
+    ],
+    'food_platform_user_grid' => [
+      'render element' => 'element',
+      'base hook' => 'food_platform_user_grid',
+    ],
+    'food_partner_order_statement_grid' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_order_statement_grid',
+    ],
+    'food_partner_finance_order_statement_grid' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_finance_order_statement_grid',
+    ],
+    'food_partner_balance_grid' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_balance_grid',
+    ],
+    'food_partner_order_grid_2' => [
+      'render element' => 'element',
+      'base hook' => 'food_partner_order_grid_2',
+    ],
+  ];
+}
+
+function food_node_delete($node) {
+  \Drupal\food\Core\CacheController::flushCache();
+}
+
+function food_cron() {
+  //\Drupal\food\Core\AppController::dispatchNotifications(TRUE);
+    db_delete('food_history')
+    ->condition('timestamp', \Drupal\food\Core\RestaurantController::NODE_NEW_LIMIT, '<')
+    ->execute();
+}
+
+function food_user_format_name_alter(&$name, $account) {
+  // Display the user's uid instead of name.
+  if ($account->id()) {
+    $user = \Drupal\user\Entity\User::load($account->id());
+    $user_first_name = $user->get('user_first_name')->value;
+    $user_last_name = $user->get('user_last_name')->value;
+
+    $parts = [];
+    if (!empty($user_first_name)) {
+      $parts[] = $user_first_name;
+    }
+    if (!empty($user_last_name)) {
+      $parts[] = $user_last_name;
+    }
+
+    if (count($parts) > 0) {
+      $name = implode(" ", $parts);
+    }
+  }
+}
+
+function food_form_user_login_form_alter(&$form, $form_state) {
+  $form['#prefix'] = '<div id="user-login-form-wrapper">';
+  $form['#suffix'] = '</div>';
+  $form['actions']['submit']['#attributes'] = array('class' => array('use-ajax-submit'));
+  $form['actions']['submit']['#ajax']['wrapper'] = 'user-login-form-wrapper';
+  $form['#attached']['library'][] = 'core/drupal.ajax';
+  $form['#attached']['library'][] = 'core/jquery.form';
+  $form['#submit'][] = '_food_user_login_submit';
+
+  $form['name']['#title'] = Drupal\Core\Render\Markup::create("Email Id");
+ 
+  $form['actions']['forgot_password'] = array(
+    '#type' => 'link',
+    '#title' => t('Forgot Password'),
+    '#url' => Url::fromRoute('user.pass'),
+    '#attributes' => [
+      'class' => ['use-ajax'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => Json::encode([
+        'width' => 700,
+      ]),
+    ],
+  );
+
+  $form['actions']['sign_up'] = array(
+    '#type' => 'link',
+    '#title' => t('Sign Up As User'),
+    '#url' => Url::fromRoute('food.signup'),
+    '#attributes' => [
+      'class' => ['use-ajax'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => Json::encode([
+        'width' => 700,
+      ]),
+    ],
+  );
+  $form['actions']['res_sign_up'] = array(
+    '#type' => 'link',
+    '#title' => t('Sign Up As Restaurent Owner'),
+    '#url' => Url::fromRoute('food.res_signup'),
+    '#attributes' => [
+      'target' => '_blank',
+    ],
+  );
+
+}
+
+function food_form_user_form_alter(&$form, $form_state) {
+  foreach (array_keys($form['actions']) as $action) {
+        if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+          $form['actions'][$action]['#submit'][] = '_food_user_edit_form_submit';
+        }
+  }
+}
+
+function _food_user_edit_form_submit(&$form,$form_state){
+  $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  $isPartner = $account->hasRole(\Drupal\food\Core\RoleController::Partner_Role_Name) || $account->hasRole(\Drupal\food\Core\RoleController::Platform_Role_Name);
+  $isSubuser = $account->hasRole(\Drupal\food\Core\RoleController::Subuser_Role_Name);
+  if ($isPartner || $isSubuser) {
+    $url = Url::fromRoute('food.partner.report.dashboard');
+    $form_state->setRedirectUrl($url);
+  }
+}
+
+  // Check if a destination was set, probably on an exception controller.
+  // @see \Drupal\user\Form\UserLoginForm::submitForm()
+
+  //$request = \Drupal::service('request_stack')->getCurrentRequest();
+  //$destination = $request->request->has('destination');
+  //if (!$destination) {
+  
+  $response = new AjaxResponse();
+  $response->addCommand(new CloseModalDialogCommand());
+  
+  $account = \Drupal\user\Entity\User::load($form_state->get('uid'));
+  $isPartner = $account->hasRole(\Drupal\food\Core\RoleController::Partner_Role_Name) || $account->hasRole(\Drupal\food\Core\RoleController::Platform_Role_Name);
+  $isSubuser = $account->hasRole(\Drupal\food\Core\RoleController::Subuser_Role_Name);
+  if ($isPartner || $isSubuser) {
+    $url = \Drupal\Core\Url::fromRoute('food.partner.report.dashboard')->toString();
+    $current_request = \Drupal::service('request_stack')->getCurrentRequest();
+    $current_request->query->set('destination', $url);
+    //return new \Symfony\Component\HttpFoundation\RedirectResponse($url);
+    $response->addCommand(new RedirectCommand(Url::fromRoute('food.partner.report.dashboard')->toString()));
+  }else{
+      $destination = \Drupal::request()->query->get('destination');
+      $response->addCommand(new RedirectCommand($destination));
+  }
+  
+  $form_state->setResponse($response);
+ 
+  //}
+  //else {
+  //  $request->query->set('destination', $request->request->get('destination'));
+  //}
+}
+
+// function food_user_login(\Drupal\user\UserInterface $account){
+//   $isPartner = $account->hasRole(\Drupal\food\Core\RoleController::Partner_Role_Name);
+//   $isSubuser = $account->hasRole(\Drupal\food\Core\RoleController::Subuser_Role_Name);
+//   if($isPartner || $isSubuser){
+//     $url = \Drupal\Core\Url::fromRoute('food.partner.report.dashboard')->toString();
+//     $current_request = \Drupal::service('request_stack')->getCurrentRequest();
+//     $current_request->query->set('destination', $url);
+//     return new \Symfony\Component\HttpFoundation\RedirectResponse($url);
+//   }
+// }
+
+function food_block_view_system_branding_block_alter(&$build, $block) {
+  $signUpUrl = Url::fromRoute('food.signup', []);
+  $signUpUrl->setOptions([
+    'query' => ['destination' => $_SERVER['REQUEST_URI']],
+    'attributes' => [
+      'class' => ['use-ajax', 'signup-btn'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => Json::encode([
+        'width' => 700,
+      ]),
+      'role' => 'button',
+    ],
+  ]);
+  $signUpLink = Link::fromTextAndUrl(t('Sign up Here'), $signUpUrl);
+
+  $build['additional_data'] = array(
+    'current_url' => $_SERVER['REQUEST_URI'],
+    'signUpLink' => $signUpLink->toString(),
+    'logoutUrl' => Url::fromRoute('user.logout', [])->toString(),
+  );
+  $build['#cache']['max-age'] = 0;
+}
+
+function food_mail($key, &$message, $params) {
+  $platform_settings = \Drupal\food\Core\PlatformController::getPlatformSettings();
+  $order_number_prefix = PhpHelper::getNestedValue($platform_settings,
+    ['order_settings', 'order_number_prefix']);
+
+  //Alternate approach: http://www.tothenew.com/blog/how-to-send-html-emails-in-drupal-8/
+  if (empty($message['headers'])) {
+    $message['headers'] = [];
+  }
+
+  $message['headers']['MIME-Version'] = '1.0';
+  $message['headers']['Content-Type'] = 'text/html; charset=ISO-8859-1';
+
+  switch ($key) {
+    case 'order_submission_email':
+      $order = $params['order'];
+      $body = \Drupal\food\Core\OrderController::buildOrderNotificationBody($order,
+        FALSE);
+
+      $message['subject'] = t('Order confirmation from ' . $platform_settings->derived_settings->site_name . '!');
+      $message['body'][] = $body;
+      break;
+
+    case 'order_confirmation_email':
+      $order = $params['order'];
+      $restaurant = \Drupal\food\Core\RestaurantController::getRestaurantById($order->restaurant_id);
+
+      $body = \Drupal\food\Core\OrderController::buildOrderConfirmationBody($order);
+
+      $message['subject'] = t('Your Order No. ' . $order_number_prefix . '# ' . $order->order_id . ' has been confirmed by restaurant - ' . $restaurant->name . '.');
+      $message['body'][] = $body;
+      break;
+
+    case 'order_cancellation_email':
+      $order = $params['order'];
+      $restaurant = \Drupal\food\Core\RestaurantController::getRestaurantById($order->restaurant_id);
+
+      $body = \Drupal\food\Core\OrderController::buildOrderCancellationBody($order);
+
+      $message['subject'] = t('Your Order No. ' . $order_number_prefix . '# ' . $order->order_id . ' has been cancelled by restaurant - ' . $restaurant->name . '.');
+      $message['body'][] = $body;
+      break;
+      
+    case 'adjustment_notification_email':
+      // Send mail to restaurant owner, if adjustment is added by Admin user.
+      $adjustment = $params['adjustment'];
+      $body = \Drupal\food\Core\OrderController::buildAdjustmentNotificationBody($adjustment);
+      $message['subject'] = t('An adjustment has been made for your Order No. ' . $order_number_prefix . '# ' . $adjustment['order_id'] . ' at ' . $adjustment['restaurant_name']);
+      $message['body'][] = $body;
+      break;
+
+    case 'vender_subuser_cancel_notification_email':
+    // Send mail to restaurant owner, if adjustment is added by Admin user.
+    $vender_subuser_cancel_notification_body = $params['vender_subuser_cancel_notification_body'];
+    $body = \Drupal\food\Core\OrderController::buildAdjustmentNotificationBody($adjustment);
+    $message['subject'] = t('An Order has been cancelled for Order No. ' . '# ' . $vender_subuser_cancel_notification_body['order_id'] . ' at ' . $vender_subuser_cancel_notification_body['restaurant_name']);
+    $message['body'][] = t('An Order has been cancelled for Order No. ' . '# ' . $vender_subuser_cancel_notification_body['order_id'] . ' at ' . $vender_subuser_cancel_notification_body['restaurant_name'] . 'by ' . $vender_subuser_cancel_notification_body['user']);
+    break;
+  }
+}
+
+function food_food_order_postplace($order, $cart) {
+  //Send order email.
+  $user = \Drupal\user\Entity\User::load($cart->user_id);
+  \Drupal::service('plugin.manager.mail')
+    ->mail('food', 'order_submission_email', $user->getEmail(),
+      $user->getPreferredLangcode(), ['order' => $order]);
+
+  //Record order items in recent history.
+  \Drupal\food\Core\OrderController::recordRecentlyOrderedItems($order->order_details->items);
+}
+
+function food_food_order_confirm($order) {
+  $user = \Drupal\user\Entity\User::load($order->user_id);
+  \Drupal::service('plugin.manager.mail')
+    ->mail('food', 'order_confirmation_email', $user->getEmail(),
+      $user->getPreferredLangcode(), ['order' => $order]);
+}
+
+function food_food_order_cancel($order) {
+  $user = \Drupal\user\Entity\User::load($order->user_id);
+  \Drupal::service('plugin.manager.mail')
+    ->mail('food', 'order_cancellation_email', $user->getEmail(),
+      $user->getPreferredLangcode(), ['order' => $order]);
+}
+
+function food_entity_field_access($operation, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, \Drupal\Core\Session\AccountInterface $account, \Drupal\Core\Field\FieldItemListInterface $items = NULL) {
+
+  if ($field_definition->getName() == 'field_metatags' && $operation == 'edit' && (in_array('partner', $account->getRoles()) || in_array('subuser', $account->getRoles()))) {
+     return AccessResult::forbidden();
+  }
+
+  // if (($field_definition->getName() == 'field_restaurant_assign' || $field_definition->getName() == 'field_subuser') && $operation == 'edit' && in_array('subuser', $account->getRoles())) {
+  //    return AccessResult::forbidden();
+  // }
+
+  if (($field_definition->getName() == 'field_restaurant_assign' || $field_definition->getName() == 'field_subuser') && $operation == 'edit') {
+    return AccessResult::forbidden();
+  }
+
+  // if (($field_definition->getName() == 'field_restaurant_assign' && $operation == 'edit' && in_array('partner', $account->getRoles()))) {
+  //    return AccessResult::forbidden();
+  // }
+
+  return AccessResult::neutral();
+}
+
+
+function food_user_update($account){
+
+$query = \Drupal::database()->select('food_restaurant', 'fr');
+$query->fields('fr',array());
+$query->condition('owner_user_id', $account->id());
+
+$results = $query->execute()->fetchAll();   
+
+if(!empty($results) && count($results) >= 1){
+  if(!$account->hasRole('partner')){
+    $account->addRole('partner');
+    $account->save();
+  }
+}
+  
+}
+
+function food_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+  $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+
+  if($form_id == 'user_form' && $user->hasRole('partner')) {
+    $subuser = array('_none' => '- None -');
+    $restaurant = array('_none' => '- None -');
+    $restaurants = \Drupal\food\Core\RestaurantController::getCurrentUserRestaurants();
+
+    if(!empty($restaurants)){
+      foreach ($restaurants as $key => $value) {
+        $restaurant[$value->restaurant_id] = $value->name;
+      }
+    }
+
+    $subusers = \Drupal\food\Core\SubuserController::getRestaurantSubuserIds();
+
+    if(!empty($subusers)){
+      foreach ($subusers as $key => $value) {
+          $user_object = \Drupal\user\Entity\User::load($value);
+         $subuser[$user_object->id()] = $user_object->getUsername();          
+      }
+    }
+
+    $form['field_subuser']['widget']['#options'] = $subuser;
+    $form['field_restaurant_assign']['widget']['#options'] = $restaurant;
+  }
+
+}
+
+function food_form_food_user_signup_form_alter(&$form, $form_state) {
+  $form['#prefix'] = '<div id="user-signup-form-wrapper">';
+  $form['#suffix'] = '</div>';
+  $form['submit']['#attributes'] = array('class' => array('use-ajax-submit'));
+  $form['submit']['#ajax']['wrapper'] = 'user-signup-form-wrapper';
+  $form['#attached']['library'][] = 'core/drupal.ajax';
+  $form['#attached']['library'][] = 'core/jquery.form';
+  $form['#submit'][] = '_food_user_signup_submit';
+}
+
+
+function _food_user_signup_submit(&$form, $form_state) {
+  $response = new AjaxResponse();
+  $response->addCommand(new CloseModalDialogCommand());
+  $response->addCommand(new RedirectCommand(Url::fromRoute('<front>')->toString()));  
+  $form_state->setResponse($response);
+}
+
+function food_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode){
+  
+  if($entity->getEntityTypeId() == "food_restaurant" && $view_mode == 'full'){
+
+    $roles = \Drupal::currentUser()->getRoles();
+    $restaurant_id = $entity->id();
+    $uid = \Drupal::currentUser()->id();
+
+    if (!\Drupal::currentUser()->isAnonymous()) {
+      $food_history = db_select('food_history','fh')
+        ->fields('fh',array('restaurant_id'))
+        ->condition('uid',$uid)
+        ->condition('restaurant_id', $restaurant_id)
+        ->execute()->fetchAll();
+
+      if(empty($food_history)){
+
+        $insert = db_insert('food_history') // Table name no longer needs {}
+          ->fields(array(
+          'uid' => $uid,
+          'restaurant_id' => $restaurant_id,
+          'timestamp' => REQUEST_TIME,
+          ))
+          ->execute();
+      }else{
+
+        $update = db_update('food_history') // Table name no longer needs {}
+          ->fields(array(
+            'timestamp' => REQUEST_TIME,
+          ))
+          ->condition('uid',$uid)
+          ->condition('restaurant_id', $restaurant_id)
+          ->execute();
+      }
+    }
+    
+    $view_type = \Drupal::request()->get('view');
+
+    if($view_type == 'notify'){
+      $url = Url::fromRoute('entity.food_restaurant.edit_form',['food_restaurant' => $entity->id()])->toString();
+      $response = new RedirectResponse($url);
+      $response->send();nxnxmxn
+
+  $history = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($history[$restaurant_id])) {
+    $history[$restaurant_id] = db_query("SELECT timestamp FROM {food_history} WHERE uid = :uid AND restaurant_id = :restaurant_id", array(':uid' => $uid, ':restaurant_id' => $restaurant_id))->fetchObject();
+  }
+  return (isset($history[$restaurant_id]->timestamp) ? $history[$restaurant_id]->timestamp : 0);
+}
+
+function food_menu_local_tasks_alter(&$data, $route_name) {
+  $data['tabs'][0]['entity.user.edit_form']['#link']['title'] = t('Change Password');
+}
+

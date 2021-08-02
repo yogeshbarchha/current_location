@@ -1,0 +1,72 @@
+{# https://www.drupal.org/node/2788835#comment-11785706 #}
+{# form tag is not necessary in this template, because Drupal adds a theme wrapper to the form that take care of create this tag with the right attributes. I also discover that if the id of the form is equal to the name of the theme function you dont'n need to include the line $form['#theme'] = 'food_restaurant_search_form' #}
+{{ form.form_build_id }}
+{{ form.form_token }}
+{{ form.form_id }}
+
+<div class="restaurant-search-container">
+	<div class="row">
+		<div class="col-md-12 restaurant-search-title">
+			<h2 class="input-fields-heading">Guaranteed Deal Everytime. Order Now</h2>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="input-group search-area">
+			  {{ form.address_search }}
+			  <span class="input-group-addon"><a href="#"><i class="fa fa-location-arrow" aria-hidden="true"></i></a></span>
+			</div>
+		</div>
+		
+		<div class="col-md-1">
+			<h3>or</h3>
+		</div>
+		
+		<div class="col-md-5">
+			<div class="input-group search-restaurant">
+			  {{ form.rest_search }}
+			  <span class="input-group-addon"><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="address-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Your current location</h4>
+      </div>
+      <div class="modal-body">
+		<div class="input-group search-area">
+			<input placeholder="Street address, city state" class="form-text form-control" type="text" id="address-modal-value" value="" size="60" maxlength="128" autocomplete="off">
+			<span class="input-group-addon"><a href="#"><i class="fa fa-location-arrow" aria-hidden="true"></i></a></span>
+		</div>
+      </div>
+	  
+	  <input type="button" value="Find restaurants" class="submit" />
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="order-type-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Select delivery mode</h4>
+      </div>
+      <div class="modal-body">
+		<p>Please select order delivery mode:</p>
+		<label>
+			<input type="radio" name="delivery_mode" value="1">
+			Delivery
+		</label>
+		<label>
+			<input type="radio" name="delivery_mode" value="2">
+			Pickup
+		</label>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

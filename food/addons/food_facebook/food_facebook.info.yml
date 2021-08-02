@@ -1,0 +1,9 @@
+name: Food Facebook integration
+description: Provides Facebook integration for Food module.
+package: Food
+type: module
+
+dependencies:
+    - food
+
+core: 8.x

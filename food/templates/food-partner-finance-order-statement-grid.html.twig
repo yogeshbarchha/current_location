@@ -1,0 +1,132 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set order_header = element['#order_header'] %}
+{% set order_rows = element['#order_rows'] %}
+{% set adjustment_header = element['#adjustment_header'] %}
+{% set adjustment_rows = element['#adjustment_rows'] %}
+{% set chargeback_header = element['#chargeback_header'] %}
+{% set chargeback_rows = element['#chargeback_rows'] %}
+{% set total_order_header = element['#total_order_header'] %}
+{% set total_order_row = element['#total_order_row'] %}
+
+{% set depositor_total = element['#depositor_total'] %}
+    
+<div class="table-responsive">
+    
+   <div style="background-color:#fff; border:0px solid #bbbbbb; padding:15px;" >
+<a title="Print Order" onclick="printElement('#printreport')" href="javascript:void(0)">
+								Print Order
+							</a>
+    <div class="print" id="printreport"> 
+        <table width="100%" border="0">
+            <tbody><tr>
+                <td>
+                    <h3>Foodondeal </h3>
+                </td>
+                <td>&nbsp;</td>
+                <td align="right" valign="top"><h3> Statement {{total_order_row.start_date}}  To  {{total_order_row.end_date}}</h3></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <table style="border-collapse:collapse" width="100%" border="0" cellspacing="0">
+                        <tbody><tr>
+                            <td width="221" class="border">To: {{total_order_row.restaurant_name}} </td>
+                            <td>&nbsp;</td>
+                            <td width="136">&nbsp;</td>
+                            <td width="170">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" class="border"><br>
+                                
+                            </td>
+                            <td>&nbsp;</td>
+                            <td class="border0" align="center">&nbsp;</td>
+                            <td align="center" class="border">Date</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td class="border0" align="center">&nbsp;</td>
+                            <td align="center" class="border">{{ total_order_row.current_time }}</td>
+                        </tr>
+                    </tbody></table>
+                    <br>
+                </td>
+            </tr>
+        </tbody></table>
+        <h2>Summary</h2>
+        <table border="1" cellspacing="0" align="left" cellpadding="5">
+            <tbody><tr>
+              <td class="border" align="center">{{ total_order_header.count }}</td>
+              <td>{{ total_order_header.gross_subtotal }}</td>
+              <td>{{ total_order_header.total_cash }}</td>
+              <td>{{ total_order_header.total_cc }}</td>
+              <td>{{ total_order_header.total_tip }}</td>
+              <td>{{ total_order_header.total_tax }}</td>
+              <td>{{ total_order_header.net_sales }}</td>
+              <td>{{ total_order_header.total_adjust }}</td>
+              <td>{{ total_order_header.partner_discount }}</td>
+              <td>{{ total_order_header.platform_discount }}</td>
+              <td>{{ total_order_header.total_commission }}</td>
+              <td>{{ total_order_header.total_processing_fee_amount }}</td>
+              <td>{{ total_order_header.total_debit_credit }}</td>
+              <td>{{ total_order_header.total_deposit }}</td>
+            </tr>
+            <tr>
+              <td class="border" align="center">{{ total_order_row.count }}</td>
+              <td>{{ total_order_row.gross_subtotal }}</td>
+              <td>{{ total_order_row.total_cash }}</td>
+              <td>{{ total_order_row.total_cc }}</td>
+              <td>{{ total_order_row.total_tip }}</td>
+              <td>{{ total_order_row.total_tax }}</td>
+              <td>{{ total_order_row.net_sales }}</td>
+              <td>{{ total_order_row.total_adjust }}</td>
+              <td>{{ total_order_row.partner_discount }}</td>
+              <td>{{ total_order_row.platform_discount }}</td>
+              <td>{{ total_order_row.total_commission }}</td>
+              <td>{{ total_order_row.total_processing_fee_amount }}</td>
+              <td>{{ total_order_row.total_debit_credit }}</td>
+              <td>{{ depositor_total|number_format(2, '.', ',') }}</td>
+            </tr>
+        </tbody></table>
+        <br>
+        
+        <div class="page " style="margin-top: 20px; margin-bottom: 10px;" align="right">
+       <div>Current Balance: 
+       {% if total_order_row.total_debit_credit >= 0 %}
+            <b>{{ (total_order_row.total_debit_credit - depositor_total)|number_format(2, '.', ',') }}</b>
+        {% elseif total_order_row.total_debit_credit <= 0 %}
+            <b>{{ (total_order_row.total_debit_credit + depositor_total)|number_format(2, '.', ',') }}</b>
+        {% endif %}
+       </div>
+        </div>
+        <table width="100%" border="1" cellspacing="0" style="border-collapse:collapse">
+        
+        <thead>
+            <tr>
+				{% for cell in order_header %}
+					<th>{{ cell.data }}</th>
+				{% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+			{% for row in order_rows %}
+				<tr ">
+					{% for cell in order_header %}
+						<td>{{ row.data[cell.field] }}</td>
+					{% endfor %}
+				</tr>
+				<tr id="order-row-{{ row.order.order_id }}" style="display: none;">
+					<td colspan="{{ order_header|length }}">
+						{{ include('food-partner-order-detail.html.twig', {order: row.order}) }}
+					</td>
+				</tr>
+			{% endfor %}
+        </tbody>
+    </table>
+         
+    </div>
+</div>        
+</div>
+
+

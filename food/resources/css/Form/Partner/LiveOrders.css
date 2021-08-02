@@ -1,0 +1,9 @@
+body:not(.path-frontpage) .content-container .region-content {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #eee;
+    margin: 0 auto;
+    overflow: auto;
+    padding: 18px;
+    width: 100% !important;
+}
+

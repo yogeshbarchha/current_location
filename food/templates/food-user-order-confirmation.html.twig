@@ -1,0 +1,202 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+{% set order = element.additionalData.order %}
+<div id="food-order-{{ order.order_id}}">
+    <div class="thank-you-screen-outter">
+        <div class="thank-you-screen">
+            <div class="thank-you-screen-image">
+                {% if order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Cancelled') %}
+                    <img src="/themes/food_theme/images/order_cancelled.gif" />
+                {% else %}
+                    <img src="/themes/food_theme/images/thankyou_img.png" />
+                 {% endif %}
+            </div>
+
+            <div class="thank-you-screen-name">
+                Dear {{ order.user_name }} 
+            </div>
+            <div class="thank-you-screen-note">
+                {% if order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Cancelled') %}
+                    Your order has been cancelled for <b><a href="">{{ order.restaurant.name }}</a></b>.
+                {% else %}
+                    Your order has been sent to <b><a href="">{{ order.restaurant.name }}</a></b>, once it confirmed you will be notified and pick your food by <strong></strong> once it confirmed you will get notified now sit back, relax and get ready to enjoy.
+                {% endif %}
+            </div>
+
+            <div class="thank-you-screen-order-details-main">
+                <div class="thank-you-screen-order-details" style="border-top:1px solid #cccccc; padding-top:18px;">
+                    <div class="left bold Methodsx" style="float:left; color:green;font-size:18px;font-family: Helvetica;">
+						<b>
+							{% if order.delivery_mode == constant('\\Drupal\\food\\Core\\Restaurant\\DeliveryMode::Delivery') %}
+								Delivery
+							{% else %}
+								Pickup
+							{% endif %}
+						</b>
+					</div>
+                    <div class="right" id="roid" style="float:right;font-size:16px;font-family: Helvetica;">{{ platform_settings.order_settings.order_number_prefix }}# {{ order.order_id }}</div>
+                    <div class="clear"></div>
+                </div><br>
+                <div class="thank-you-screen-order-details">
+                    <div class="left" style="float:left;">
+						{% if order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Submitted') %}
+							Submitted
+						{% elseif order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Confirmed') %}
+							Confirmed
+						{% elseif order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Cancelled') %}
+							Cancelled
+						{% endif %}
+					</div>
+                    <div class="right" style="float:right;font-size:16px;font-family: Helvetica;">{{ order.derived_fields.created_time_formatted }}</div>
+                    <div class="clear"></div>
+                </div><br>
+                {% if order.order_details.schedule_date is not empty %}
+                    <div class="thank-you-screen-order-details">
+                        <div class="left" style="float:left;">Scheduled for </div>
+                        <div class="right" id="sch-time" style="float:right;font-size:16px;font-family: Helvetica;">{{ order.order_details.schedule_date }}, {{ order.order_details.schedule_time }}</div>
+                        <div class="clear"></div>
+                    </div><br>
+                {% endif %}
+                <div class="clear"></div>
+                <div class="thank-you-screen-order-details" style="border-bottom:1px solid #cccccc; padding-bottom:18px;">
+                    <div class="left" style="float:left;">From</div>
+                    <div class="right text_dots" style="float:right;font-size:16px;font-family: Helvetica;"> <a href="#" style="color:#D66B27;">{{ order.restaurant.name }}</a></div>
+                </div><br>
+                {% if order.orderCancellationLink is not empty %}
+                    <div class="thank-you-screen-order-details">
+                        {{ order.orderCancellationLink }}
+                    </div><br>
+                {% endif %}
+                {% if order.orderReviewLink is not empty and order.status == constant('\\Drupal\\food\\Core\\Order\\OrderStatus::Confirmed') %}
+                    <div class="order-review-link">
+                        {{ order.orderReviewLink }}
+                    </div><br>
+                {% endif %}
+            </div>
+            <div class="thank-you-screen-full-order-receipt">
+			
+				<div class="INfomyacc">To check your order status go to {{ order.orderPageLink }}</div>
+				<div style="width:100%; float:left;box-shadow:0 0 10px 0 #ccc; border: 1px solid#ccc; padding:10px;">
+					<div style="background-color:#ffffff;width:100%;height:5%;">
+						<img class="receipt-logo" src="{{ platform_settings.derived_settings.logo_url }}">
+						<a href="javascript:void(0);" class="print-receipt-btn" onclick="printElement('#food-order-{{ order.order_id}} ')" style="float:right">Print Receipt</a>
+					</div>
+					<hr>
+					<div class="thank-you-screen-order-receipt-table">
+						<table class="order-details">
+							<tbody>
+								<tr>
+									<td class="labels">From:</td>
+									<td>
+										<b>{{ order.restaurant.name }}</b><br>
+										<a class="blue" href="#">{{ order.restaurant.derived_fields.formatted_address }}</a>
+										<br>
+									</td>
+									{% if order.order_details.delivery_mode == constant('\\Drupal\\food\\Core\\Restaurant\\DeliveryMode::Delivery') %}
+										<td class="labels">Delivery:</td>
+										<td>
+											<b> {{ order.user_name }}</b><br>
+											{{ order.user_address }},
+											{{ order.user_apartment_number }}<br>
+											{{ order.user_phone }}
+										</td>
+									{% else %}
+										<td class="labels">Pickup:</td>
+										<td>
+											<b> {{ order.user_name }}</b><br>
+
+											{{ order.user_phone }}
+										</td>
+									{% endif %}
+								</tr>
+							</tbody>
+						</table>
+						<table class="payment-details" style="width:100%;">
+							<thead style=""><tr>
+									<th>Item</th>
+									<th class="small_col">Price</th>
+									<th class="small_col qty">Qty</th>
+									<th class="small_col">Sum</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% set items = order.order_details.items %}
+								{% for item in items %}
+                                    <tr>
+                                        <td>{{ item.item_name }}
+                                            {% if item.instructions != NULL %}
+                                                <br> {{ item.instructions }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.item_total_amount/item.quantity }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ item.item_total_amount }}</td>
+                                    </tr>
+
+								{% endfor %}
+                                {% if order.order_details.instructions != NULL %}
+                                    <tr class="instructions">
+                                        <td colspan="4"><h5>Special Instructions:</h5>{{ order.order_details.instructions }}</td>
+                                    </tr>
+                                {% endif %}
+                                
+                                {% if order.order_details.condiments != NULL %}
+                                    <tr class="instructions">
+                                        <td colspan="4"><h5>Condiments & Utensils:</h5>{{ order.order_details.condiments|join(', ') }}</td>
+                                    </tr>
+                                {% endif %}
+                                
+                                {% if order.order_details.num_people != NULL %}
+                                    <tr class="instructions">
+                                        <td colspan="4"><h5>No. of People:</h5>{{ order.order_details.num_people }}</td>
+                                    </tr>
+                                {% endif %}
+                                
+                                {% if order.order_details.breakup.items_total_amount %}
+                                    <tr>
+                                        <td>Subtotal:</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>{{ order.order_details.breakup.items_total_amount }}</td>
+                                    </tr>
+
+                                    {% if order.order_details.breakup.total_discount_amount > 0 %}
+                                        <tr>
+                                            <td>Discount:</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>{{ order.order_details.breakup.total_discount_amount }}</td>
+                                        </tr>
+                                    {% endif %}
+
+                                    {% if order.order_details.breakup.tip_amount > 0 %}
+                                        <tr>
+                                            <td>Tip:</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>{{ order.order_details.breakup.tip_amount }}</td>
+                                        </tr>
+                                    {% endif %}
+
+                                    <tr>
+                                        <td>Tax:</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>{{ order.order_details.breakup.tax_amount }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Total:</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>{{ currencySymbol }}{{ order.order_details.breakup.net_amount }}</td>
+                                    </tr>
+                                {% endif %}                                         
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

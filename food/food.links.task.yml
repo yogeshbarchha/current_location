@@ -1,0 +1,29 @@
+#Admin tasks
+restaurant.settings_tab:
+  route_name: food.restaurant_settings
+  title: Settings
+  base_route: food.restaurant_settings
+
+dish.settings_tab:
+  route_name: food.dish_settings
+  title: Settings
+  base_route: food.dish_settings
+
+service_area.settings_tab:
+  route_name: food.service_area_settings
+  title: Settings
+  base_route: food.service_area_settings
+
+
+#User tasks
+food.user.profile:
+  route_name: food.user.profile
+  base_route: entity.user.canonical
+  title: My Profile
+  weight: 10
+
+food.user.address.list:
+  route_name: food.user.address.list
+  base_route: entity.user.canonical
+  title: Addresses
+  weight: 11

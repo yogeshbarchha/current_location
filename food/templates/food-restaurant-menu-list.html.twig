@@ -1,0 +1,75 @@
+{% set platform_settings = food_platform_settings() %}
+{% set currencySymbol = platform_settings.derived_settings.currency_symbol %}
+<div>
+	<div class="restaurant-menu-list-page-menu-header">
+		<div class="restaurant-menu-list-page">
+			<ul class="nav nav-tabs">
+				{% for restaurant_menu in element.additionalData.restaurant_menus %}
+					<li role="presentation"><a href="#menu-{{ restaurant_menu.menu_id }}">{{ restaurant_menu.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	
+	<div class="restaurant-menu-list-cart-form">
+		<div class="col-md-9">
+			{% for restaurant_menu in element.additionalData.restaurant_menus %}
+				<div>
+					<a id="menu-{{restaurant_menu.menu_id}}">&nbsp;</a>
+					{% for restaurant_menu_section in element.additionalData.restaurant_menu_sections if restaurant_menu_section.menu_id == restaurant_menu.menu_id %}
+						<div class="restaurant-menu-list-page">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">{{ restaurant_menu_section.name }}</h3>
+								</div>
+								
+								<div class="panel-body">
+									<div class="restaurant-menu-list-cards">
+										{% set divClosed = true %}
+										{% for restaurant_menu_item in element.additionalData.restaurant_menu_items if restaurant_menu_item.restaurant_menu_section_id == restaurant_menu_section.restaurant_menu_section_id %}
+											{% if loop.index0 % 3 == 0 %}
+												<div class="row">
+												{% set divClosed = false %}
+											{% endif %}
+											<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+												<div class="restaurant-menu-item-main">
+													<img src="{{ restaurant_menu_item.image_url ? restaurant_menu_item.image_url : '/themes/food_theme/images/menu-item.jpg' }}" alt="food-image" class="pull-left" onerror="this.src='/themes/food_theme/images/menu-item.jpg'" />
+													<div class="col-md-7">
+														<h2 class="restaurant-menu-list-cards-heading">{{ restaurant_menu_item.add_cart_link }}</h2>
+														<p class="restaurant-menu-list-cards-description" style="clear:both;" title="{{ restaurant_menu_item.description }}">{{ restaurant_menu_item.description|length ? 30 ? restaurant_menu_item.description[:30] ~ '...' : restaurant_menu_item.description }}</p>
+														<p class="restaurant-menu-list-cards-price">{{currencySymbol}} {{ restaurant_menu_item.price|round(2, 'ceil') }}</p>
+													</div>
+													{% if restaurant_menu_item.edit_link %}
+														<div>
+															{{ restaurant_menu_item.edit_link }}
+														</div>
+													{% endif %}
+												</div>
+											</div>
+											{% if ((loop.index0 + 1) % 3 == 0) %}
+												</div>
+												{% set divClosed = true %}
+											{% endif %}
+										{% endfor %}
+										{% if divClosed == false %}
+											</div>
+											{% set divClosed = true %}
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endfor %}
+		</div>
+		
+		<div class="col-md-3 food-cart-column">
+			<div class="user-cart-container">
+				{{ element.user_cart_block_html }}
+			</div>
+			{{ element.additionalData.restaurantMenuCheckoutLink }}
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,29 @@
+food_google.signin.oauth2:
+  path: '/food/google/signin/oauth2'
+  defaults:
+    _controller: '\Drupal\food_google\Form\GoogleController::oauth2'
+    _title: 'Google Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+food_google.signin.oauth2callback:
+  path: '/food/google/signin/oauth2callback'
+  defaults:
+    _controller: '\Drupal\food_google\Form\GoogleController::oauth2Callback'
+    _title: 'Google Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+food_google.signin.processoauthresponse:
+  path: '/food/google/signin/processoauthresponse'
+  defaults:
+    _controller: '\Drupal\food_google\Form\GoogleController::processOAuthResponse'
+    _title: 'Google Sign In'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
